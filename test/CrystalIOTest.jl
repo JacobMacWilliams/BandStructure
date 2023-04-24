@@ -28,7 +28,7 @@ function crystalReaderWriterTest(confpath::String)
     basevecs[1,1] = 0
     basevecs[2,1] = 0
     basevecs[1,2] = 1
-    basevecs[2,2] = 1
+    basevecs[2,2] = 0
     crystalWriter("graphene", 400, "triangle", basevecs, confpath)
     N, basevecs_read, lattice = crystalParser(confpath, "graphene")
 
