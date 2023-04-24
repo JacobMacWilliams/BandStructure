@@ -2,8 +2,12 @@ module CrystalIO
 using FromFile
 using ConfParser
 using Parsers: parse
-export parseLatticeConf, parseCrystal, 
-writeToBravaisConf, writeToCrystalConf
+export 
+parseLatticeConf,
+parseCrystal,
+writeToBravaisConf,
+writeToCrystalConf,
+configureGraphene
 
 function parseLatticeConf(file::String, sec::String)
     conf = ConfParse(file, "ini")
@@ -82,6 +86,22 @@ function writeToCrystalConf(name, N::Integer, lattice::String, basisvecs::Matrix
         commit!(conf, name, key, values)
     end
     save!(conf, path)
+end
+
+function configureGraphene(crystalconf::String, bravaisconf::String)
+  vecs = zeros(2, 2)
+  vecs[1,1] = 1/2 * sqrt(3)
+  vecs[2,1] = 1/2 
+  vecs[1,2] = 1/2 * sqrt(3)
+  vecs[2,2] = -1/2
+  writeToBravaisConf("triangle", vecs, bravaisconf)
+
+  basevecs = zeros(2,2)
+  basevecs[1,1] = 0
+  basevecs[2,1] = 0
+  basevecs[1,2] = 1
+  basevecs[2,2] = 0
+  writeToCrystalConf("graphene", 500, "triangle", basevecs, crystalconf)
 end
 
 end
