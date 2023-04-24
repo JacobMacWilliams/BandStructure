@@ -22,12 +22,9 @@ configureGraphene(crystalconf, bravaisconf)
 function getHoppingMatrixTest()
     crystal = Crystal("graphene", crystalconf, bravaisconf)
     nnarrays = getPrimitiveNearestNeighbors(crystal)
-    println(nnarrays)
     hopping = getHoppingMatrix(crystal, 1, nnarrays)
     expected = zeros(2, 2)
     expected[1, 2] = -1 # only hopping from B to A in primitive cell a1
-    println(hopping)
-    println(expected)
     return (expected == hopping)
 end
 
