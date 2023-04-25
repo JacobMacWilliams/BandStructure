@@ -51,17 +51,17 @@ function getNearestNeighbors(crystal::Crystal, latticeiter, currentvec, dim, bas
   nnarray = Vector{Bool}(undef, (2*dim + 1)*basis)
   minidx = 0
   min::Float64 = NaN64
-  for (idx, (primitive, basisvec)) in enumerate(latticeiter)
+  for (idx, (basisvec, primitive)) in enumerate(latticeiter)
       position = primitive + basisvec
       d = norm(position - currentvec)
-      
+
       if isapprox(d, 0) # case: position is the currentvec
           nnarray[idx] = false
-      elseif (isnan(min) || (!isapprox(min - d, 0) && d < min)) # case: position is true new nn
+      elseif (isnan(min) || (!isapprox(min, d) && d < min)) # case: position is true new nn
           min = d
           minidx = idx
           nnarray[idx] = true
-      elseif isapprox(min - d, 0) # case: position is equally distant from currentvec as last nn
+      elseif isapprox(min, d) # case: position is equally distant from currentvec as last nn
           nnarray[idx] = true
       else # case: position is further from currentvec as last nn
           nnarray[idx] = false
