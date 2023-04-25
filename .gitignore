@@ -1,3 +1,5 @@
 bravais.ini
 crystal.ini
 configs.ini
+plots/**
+test/plots/**
