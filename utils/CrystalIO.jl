@@ -99,7 +99,7 @@ function configureGraphene(crystalconf::String, bravaisconf::String)
   basevecs = zeros(2,2)
   basevecs[1,1] = 0
   basevecs[2,1] = 0
-  basevecs[1,2] = 1
+  basevecs[1,2] = 1 / sqrt(3)
   basevecs[2,2] = 0
   writeToCrystalConf("graphene", 500, "triangle", basevecs, crystalconf)
 end
