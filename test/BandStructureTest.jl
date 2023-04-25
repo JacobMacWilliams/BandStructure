@@ -12,7 +12,7 @@ end
 
 crystalconf = joinpath("conf", "crystal.ini")
 if !ispath(crystalconf)
-    crystalconf = joinpath("conf", "bravais.default.ini")
+    crystalconf = joinpath("conf", "crystal.default.ini")
 end
 
 open(bravaisconf, truncate=true)

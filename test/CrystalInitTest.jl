@@ -11,7 +11,7 @@ end
 
 crystalconf = joinpath("conf", "crystal.ini")
 if !ispath(crystalconf)
-    crystalconf = joinpath("conf", "bravais.default.ini")
+    crystalconf = joinpath("conf", "crystal.default.ini")
 end
 
 function crystalBravaisInit(name::String, lattice::String, N::Integer, basisvecs::Matrix{Float64}, vecs::Matrix{Float64}, bfile::String, cfile::String)
