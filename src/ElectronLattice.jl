@@ -1,7 +1,8 @@
 module ElectronLattice
 using FromFile
 @from "CrystalLattice.jl" using CrystalLattice
-@from "CrystalLattice.jl" import CrystalLattice.getName
+@from "CrystalLattice.jl" import CrystalLattice.getName, CrystalLattice.getVecs,
+                                 CrystalLattice.getSize
 export ElectronCrystal, getName, getCrystal, getStatesPerSite, getElectronNumber
 
 # The true states per site number is 2 * statespersite corresponding
@@ -32,6 +33,17 @@ end
 
 function getElectronNumber(ecrystal::ElectronCrystal)
     return ecrystal.population
+end
+
+function getSize(ecrystal::ElectronCrystal)
+    crystal = getCrystal(ecrystal)
+    return getSize(crystal)
+end
+
+function getVecs(ecrystal::ElectronCrystal)
+    crystal = getCrystal(ecrystal)
+    basisvecs, bravaisvecs = getVecs(crystal)
+    return basisvecs, bravaisvecs
 end
 
 end
