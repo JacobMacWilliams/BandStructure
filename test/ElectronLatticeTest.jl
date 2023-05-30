@@ -3,8 +3,8 @@ using FromFile, Test
 @from "../src/CrystalLattice.jl" using CrystalLattice
 @from "../src/ElectronLattice.jl" using ElectronLattice
 
-bravaisconf = joinpath("conf", "elatticeconf", "bravais.ini")
-crystalconf = joinpath("conf", "elatticeconf", "crystal.ini")
+bravaisconf = joinpath("conf", "bravais.default.ini")
+crystalconf = joinpath("conf", "crystal.default.ini")
 
 function electronInit(ename::String, cname::String, states::Int, population::Int, cfile::String, bfile::String)
     ecrystal = ElectronCrystal(ename, cname, states, population, cfile, bfile)
