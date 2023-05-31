@@ -3,10 +3,8 @@ using FromFile
 @from "CrystalLattice.jl" using CrystalLattice
 @from "CrystalLattice.jl" import CrystalLattice.getName, CrystalLattice.getVecs,
                                  CrystalLattice.getSize
-export ElectronCrystal, getName, getCrystal, getStatesPerSite, getElectronNumber
+export ElectronCrystal, getName, getCrystal, getStatesPerSite, getElectronNumber, getHoppingMatrixStructure
 
-# The true states per site number is 2 * statespersite corresponding
-# to the spin degree of freedom.
 struct ElectronCrystal
     name::String
     crystal::Crystal
@@ -45,5 +43,42 @@ function getVecs(ecrystal::ElectronCrystal)
     basisvecs, bravaisvecs = getVecs(crystal)
     return basisvecs, bravaisvecs
 end
+
+# This function constructs the hopping matrix between the unit cell located at the origin and a neighboring
+# unit cell assuming a tight binding model (i.e. only nearest neighbor interactions).
+function getHoppingMatrixStructure(crystal::ElectronCrystal, cell::Int, nnarrays::Matrix{Bool})
+  
+    basisvecs, _ = getVecs(crystal)
+    basis = size(basisvecs, 2)
+    n = getStatesPerSite(crystal)
+    hopping = ones(basis*n, basis*n)
+    ijkl = Iterators.product(1:n, 1:n, 1:basis, 1:basis)
+    
+    # i labels the spin state "to which the electron is transitioning"
+    # j labels the spin state "from which the electron is transitioning"
+    # k labels the crystal lattice site to which "the electron is hopping"
+    # l labels the crystal lattice site from which "the electron is hopping"
+    for (i, j, k, l) in ijkl
+        tosite = n * (k - 1)
+        fromsite = n * (l - 1)
+        tostate = tosite + i
+        fromstate = fromsite + j
+        isnearest = nnarrays[cell*basis + k, l]
+
+        # Hopping term
+        if (isnearest)
+            hopping[tostate, fromstate] *= 5 # Mean field correction
+            if (i == j)
+                hopping[tostate, fromstate] *= 3 # hopping term
+            end
+        end
+
+        # Interaction correction
+        if ((i == j) && (k == l) && (cell == 0))
+            hopping[tostate, fromstate] *= 7
+        end
+    end
+    return hopping
+  end
 
 end
