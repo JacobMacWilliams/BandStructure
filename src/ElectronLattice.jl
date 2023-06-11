@@ -3,7 +3,14 @@ using FromFile
 @from "CrystalLattice.jl" using CrystalLattice
 @from "CrystalLattice.jl" import CrystalLattice.getName, CrystalLattice.getVecs,
                                  CrystalLattice.getSize
-export ElectronCrystal, getName, getCrystal, getStatesPerSite, getElectronNumber, getHoppingMatrixStructure
+export ElectronCrystal,
+       getName, 
+       getCrystal, 
+       getVecs, 
+       getStatesPerSite,
+       getSize,
+       getElectronNumber, 
+       getHoppingMatrixStructure
 
 struct ElectronCrystal
     name::String
