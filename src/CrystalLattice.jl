@@ -5,7 +5,12 @@ using LinearAlgebra: norm
 @from "BravaisLattice.jl" import BravaisLattice.getName
 @from "BravaisLattice.jl" import BravaisLattice.getVecs
 @from "../utils/CrystalIO.jl" using CrystalIO: parseCrystalConf as getCrystal
-export Crystal, getName, getSize, getLattice, getVecs, getPrimitiveNearestNeighbors
+export Crystal,
+       getName,
+       getSize,
+       getLattice,
+       getVecs,
+       getPrimitiveNearestNeighbors
 
 struct Crystal
   name::String
@@ -42,7 +47,7 @@ end
 # This function has a number of parameters simply because it only serves
 # as a helper function to getPrimitiveNearestNeighbors, and the paramters shouldn't
 # be recalculated if they don't change across multiple calls.
-function getNearestNeighbors(crystal::Crystal, latticeiter, currentvec, dim, basis)
+function getNearestNeighbors(latticeiter, currentvec, dim, basis)
   #=
   The nearest neighbor list here is a boolean list containing true at position
   n[j*basis + i] if basisvecs[:, i] + bravaisvecs[:, j] is a nearest neighbor 
@@ -88,7 +93,7 @@ function getPrimitiveNearestNeighbors(crystal::Crystal)::Matrix{Bool}
   latticeiter = Iterators.product(eachcol(basisvecs), eachcol(bravaisvecs))
   nnarrays = []
   for basisvec in eachcol(basisvecs)
-    nnarray = getNearestNeighbors(crystal, latticeiter, basisvec, dim, basis)
+    nnarray = getNearestNeighbors(latticeiter, basisvec, dim, basis)
     push!(nnarrays, nnarray)
   end
   nnarrays = cat(nnarrays..., dims = 2)
