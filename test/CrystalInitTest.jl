@@ -3,6 +3,7 @@ using FromFile
 using Test
 @from "..\\utils\\CrystalIO.jl" using CrystalIO: writeToBravaisConf, writeToCrystalConf
 @from "..\\src\\CrystalLattice.jl" using CrystalLattice
+@from "..\\src\\ElectronLattice.jl" using ElectronLattice
 
 bravaisconf = joinpath("conf", "bravais.ini")
 if !ispath(bravaisconf)
@@ -30,5 +31,4 @@ function crystalBravaisInit(name::String, lattice::String, N::Integer, basisvecs
 end
 
 @test crystalBravaisInit("testCrystal", "testLattice", 200, rand(Float64, 2, 3), rand(Float64, 2, 2), bravaisconf, crystalconf)
-
 end
