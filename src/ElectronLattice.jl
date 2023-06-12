@@ -86,6 +86,6 @@ function getHoppingMatrixStructure(crystal::ElectronCrystal, cell::Int, nnarrays
         end
     end
     return hopping
-  end
+end
 
 end
