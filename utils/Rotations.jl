@@ -1,7 +1,7 @@
 module Rotations
 using Rotations
 
-function rotate2d(v::Vector, rad::Float64)
+function rotate2d(v::Vector, rad)
     if length(v2d) != 2
         error("This function is only intended for rotations of 2d vectors.")
     end
