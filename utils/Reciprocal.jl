@@ -4,7 +4,9 @@ using LinearAlgebra: norm
 using Plots
 @from "Rotations.jl" using Rotations
 
-export reciprocalgraphene, discretehexagon
+export reciprocalgraphene, 
+       discretehexagon,
+       getgraphenepath
 
 function reciprocalgraphene()
     # Assuming lattice constant of 1
@@ -19,6 +21,50 @@ function reciprocalgraphene()
 
     return (k1, k2)
 end
+
+# CONSTRUCTING HIGH SYMMETRY PATH
+function getgraphenepath()
+    k1, k2 = reciprocalgraphene()
+  
+   # from bottom face to origin
+    start = k2 / 2
+    stop = zeros(2)
+    steps = 300
+    delta = (stop - start) / steps
+    path1 = [start + i*delta for i in 1:steps]
+  
+    # from origin to corner
+    start = stop
+    rot90 = [0 -1; 1 0]
+    stop = 1 / sqrt(3) * rot90 * k2
+    steps = 300
+    delta = (stop - start) / steps
+    path2 = [start + i * delta for i in 1:steps]
+  
+    # from corner to corner
+    start = stop
+    stop = start + 1 / sqrt(3) * norm(k2) * [0; -1]
+    steps = 300
+    delta = (stop - start) / steps
+    path3 = [start + i * delta for i in 1:steps]
+  
+    # from corner back to origin
+    start = stop
+    stop = zeros(2)
+    steps = 300
+    delta = (stop - start) / steps
+    path4 = [start + i * delta for i in 1:steps]
+  
+    # from origin to top face
+    start = stop
+    stop = k1 / 2
+    steps = 300
+    delta = (stop - start) / steps
+    path5 = [start + i * delta for i in 1:steps]
+  
+    points = cat(path1, path2, path3, path4, path5, dims = 1)
+    return points
+  end
 
 function discretehexagon(eps::Float64, method::String)
 

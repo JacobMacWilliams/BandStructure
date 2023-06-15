@@ -13,7 +13,21 @@ function discretehexagontest(eps::Float64, method::String)
       push!(y, point[2])
     end
     plot = scatter(x, y)
-    savefig(plot, "test.png")
+    savepath = joinpath("test", "plots", "discretehexagon.png")
+    savefig(plot, savepath)
+end
+
+function plotpath()
+  points = getgraphenepath()
+  x = []
+  y = []
+  for p in points
+      push!(x, p[1])
+      push!(y, p[2])
+  end
+  scatter(x, y)
+  savepath = joinpath("test", "plots", "graphenepath.png")
+  savefig(savepath)
 end
 
 discretehexagontest(0.05, "constantstep")
