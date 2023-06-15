@@ -3,6 +3,7 @@ using FromFile
 using Plots
 using LinearAlgebra
 @from "CrystalLattice.jl" using CrystalLattice
+@from "../utils/Reciprocal.jl" using Reciprocal
 export getHoppingMatrix
 # This function assumes a tight binding model with only nearest neighbor hopping.
 # Furthermore we assume that the nearest neighbors are of an equal displacement 
@@ -39,77 +40,13 @@ function getBlochMatrix(k::Vector{Float64}, crystal::Crystal, nnarrays::Matrix{B
   return eigvals(bloch)
 end
 
-function getGraphenePath()
-  k1 = zeros(2)
-  k1[1] = 1
-  k1[2] = sqrt(3)
-  k1 = 2 * pi / sqrt(3) * k1
-  k2 = zeros(2)
-  k2[1] = 1
-  k2[2] = -sqrt(3)
-  k2 = 2 * pi / sqrt(3) * k2
-
- # CONSTRUCTING HIGH SYMMETRY PATH
-
- # from bottom face to origin
-  start = k2 / 2
-  stop = zeros(2)
-  steps = 300
-  delta = (stop - start) / steps
-  path1 = [start + i*delta for i in 1:steps]
-
-  # from origin to corner
-  start = stop
-  rot90 = [0 -1; 1 0]
-  stop = 1 / sqrt(3) * rot90 * k2
-  steps = 300
-  delta = (stop - start) / steps
-  path2 = [start + i * delta for i in 1:steps]
-
-  # from corner to corner
-  start = stop
-  stop = start + 1 / sqrt(3) * norm(k2) * [0; -1]
-  steps = 300
-  delta = (stop - start) / steps
-  path3 = [start + i * delta for i in 1:steps]
-
-  # from corner back to origin
-  start = stop
-  stop = zeros(2)
-  steps = 300
-  delta = (stop - start) / steps
-  path4 = [start + i * delta for i in 1:steps]
-
-  # from origin to top face
-  start = stop
-  stop = k1 / 2
-  steps = 300
-  delta = (stop - start) / steps
-  path5 = [start + i * delta for i in 1:steps]
-
-  points = cat(path1, path2, path3, path4, path5, dims = 1)
-  return points
-end
-
-function plotGraphenePath()
-  points = getGraphenePath()
-  x = []
-  y = []
-  for point in points
-    push!(x, point[1])
-    push!(y, point[2])
-  end
-  plot = scatter(x, y)
-  savefig(plot, "path.png")
-end
-
 function calculateGrapheneBandStructure(crystal::Crystal)
   if getName(crystal) != "graphene"
     return
   end
 
   nnarrays = getPrimitiveNearestNeighbors(crystal)
-  points = getGraphenePath()
+  points = getgraphenepath()
   
   x = []
   z1 = []

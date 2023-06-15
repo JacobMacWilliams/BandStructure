@@ -6,7 +6,7 @@ export embedinlist,
        
 # Assuming the first index of state changes the fastest along the rows
 # the second the second fastest along the rows...etc.
-function embedinlist(state::Tuple, sizes::Tuple)
+function embedinlist(state, sizes)
     idx = 1
     size = 1
     for (i, qnum) in enumerate(state)
@@ -16,13 +16,13 @@ function embedinlist(state::Tuple, sizes::Tuple)
     return idx
 end
 
-function embedinmatrix(tostate::Tuple, fromstate::Tuple, sizes::Tuple)
+function embedinmatrix(tostate, fromstate, sizes)
     row = embedinlist(tostate, sizes)
     col = embedinlist(fromstate, sizes)
     return (row, col)
 end
 
-function extractfromlist(state::Int, sizes::Tuple)
+function extractfromlist(state::Int, sizes)
     totalstates = prod(sizes)
     if state > totalstates
         error("The state number provided is incompatible with the total" +
@@ -58,7 +58,7 @@ function extractfromlist(state::Int, sizes::Tuple)
     return Tuple(extstate)
 end
 
-function extractfromatrix(tostate::Int, fromstate::Int, sizes::Tuple)
+function extractfromatrix(tostate::Int, fromstate::Int, sizes)
     extractedtostate = extractfromlist(tostate, sizes)
     extractedfromstate = extractfromlist(fromstate, sizes)
     return (extractedtostate, extractedfromstate)

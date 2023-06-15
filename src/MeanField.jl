@@ -28,13 +28,13 @@ function FieldCorrelator(ecrystal::ElectronCrystal, primeslicemap::Dict, localin
     nbasis = size(basisvecs, 2)
     nspins = getStatesPerSite(ecrystal)
     
+    # Here the matrix describing the potential can be thought of a set of intercell interaction
+    # matrices. The first unitcell can be assumed to be at the origin. The potential V_{i,j} is only
+    # dependent on the relative displacement of the two lattice sites therefore the intercell interaction
+    # matrix should be symmetric.
     npot = size(potential)
     nonlocal = (npot[1] != 0)
-
-    totsize = 1
-    for d in npot
-        totsize *= d
-    end
+    totsize = prod(npot)
 
     if !nonlocal
         ncells = 1
@@ -42,8 +42,13 @@ function FieldCorrelator(ecrystal::ElectronCrystal, primeslicemap::Dict, localin
         ncells = Int64(totsize / nbasis ^ 2)
     end
 
-    nstates = nspins * nbasis * ncells
-    correlator = ones(nstates, nstates)
+    # Since the diagonalization of the mean field requires that the two point correlator describing
+    # the correlations between unit cell i and unit cell j depend only on their relative displacement.
+    # The entire information of the two point correlator is contained in the set of two point correlators
+    # between the unit cell at the origin and all other unit cells in the crystal.
+    nstatesorigin = nspins * nbasis
+    nstates = nstatesorigin * ncells
+    correlator = ones(nstates, nstatesorigin)
     FieldCorrelator(localint, nonlocal, primeslicemap, correlator)
 end
 
@@ -97,7 +102,6 @@ function hubbardprimeslicemapgraphene(basisize::Int)
     pspin(i) = (i[1] == i[3]) && (i[2] == i[4]) ? true : false
     apspin(i) = (i[1] != i[3]) && (i[2] == i[4]) ? true : false
     sizes = (2, basisize)
-    #map2d(i) = (2 * (i[2] - 1) + i[1], 2 * (i[4] - 1) + i[3])
 
     pspiniter = Iterators.filter(pspin, allstates)
     pspiniter = Iterators.map(x -> embedinmatrix((x[1], x[2]), (x[3], x[4]), sizes), pspiniter)
