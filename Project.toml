@@ -2,7 +2,6 @@ name = "BandStructure"
 uuid = "36ee9aef-ff72-4323-a812-68e9f3f57ece"
 
 [deps]
-ConfParser = "88353bc9-fd38-507d-a820-d3b43837d6b9"
 FromFile = "ff7dd447-1dcb-4ce3-b8ac-22a812192de7"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Parsers = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
