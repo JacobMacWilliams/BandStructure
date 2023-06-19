@@ -1,11 +1,11 @@
-[[electron lattice]]
+[[electronlattice]]
     name = "hubbard model"
     crystal = "graphene"
     statespersite = 2
     U = -0.6
     V = 0.0
 
-[[electron lattice]]
+[[electronlattice]]
     name = "cdw enhanced coupling"
     crystal = "graphene"
     statespersite = 2
