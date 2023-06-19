@@ -25,7 +25,7 @@ end
 function extractfromlist(state::Int, sizes)
     totalstates = prod(sizes)
     if state > totalstates
-        error("The state number provided is incompatible with the total" +
+        error("The state number provided is incompatible with the total" *
               "degrees of freedom of the system.")
     end
     

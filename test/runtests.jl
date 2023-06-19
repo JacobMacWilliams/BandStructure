@@ -1,5 +1,4 @@
-tests = ["CrystalIOTest.jl", 
-         "CrystalInitTest.jl", 
+tests = ["CrystalInitTest.jl", 
          "BandStructureTest.jl", 
          "ElectronLatticeTest.jl",
          "MeanFieldTest.jl",

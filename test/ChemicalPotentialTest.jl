@@ -23,9 +23,9 @@ function highband(k, r)
 end
 
 function highbandTest()
-    crystalconf = joinpath("conf", "crystal.default.ini")
-    bravaisconf = joinpath("conf", "bravais.default.ini")
-    ecrystal = ElectronCrystal("egraphene", "graphene", 2, 500, crystalconf, bravaisconf)
+    crystalconf = joinpath("conf", "crystal.default.toml")
+    bravaisconf = joinpath("conf", "bravais.default.toml")
+    ecrystal = ElectronCrystal("egraphene", "graphene", 2, crystalconf, bravaisconf)
     _, bravais = getVecs(ecrystal)
 
     points = getgraphenepath()
@@ -33,8 +33,6 @@ function highbandTest()
     energies = collect(Iterators.map(p -> highband(p, bravais[:,1]), points))
     return energies
 end
-
-
         
 function plothighbandTest()
     energies = highbandTest()
@@ -44,9 +42,9 @@ function plothighbandTest()
 end
 
 function chemicalpotentialtest()
-    crystalconf = joinpath("conf", "crystal.default.ini")
-    bravaisconf = joinpath("conf", "bravais.default.ini")
-    ecrystal = ElectronCrystal("egraphene", "graphene", 2, 500, crystalconf, bravaisconf)
+    crystalconf = joinpath("conf", "crystal.default.toml")
+    bravaisconf = joinpath("conf", "bravais.default.toml")
+    ecrystal = ElectronCrystal("egraphene", "graphene", 2, crystalconf, bravaisconf)
 
     # Calculate energy of each k point in the BZ for both bands.
     _, bravais = getVecs(ecrystal)

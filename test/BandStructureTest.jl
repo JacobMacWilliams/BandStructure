@@ -1,25 +1,12 @@
 module BandStructureTest
 using FromFile
 using Test
-@from "../utils/CrystalIO.jl" using CrystalIO
 @from "../src/CrystalLattice.jl" using CrystalLattice
 @from "../src/BandStructure.jl" using BandStructure
 
-bravaisconf = joinpath("conf", "bravais.ini")
-if !ispath(bravaisconf)
-    bravaisconf = joinpath("conf", "bravais.default.ini")
-end
-
-crystalconf = joinpath("conf", "crystal.ini")
-if !ispath(crystalconf)
-    crystalconf = joinpath("conf", "crystal.default.ini")
-end
-
-open(bravaisconf, truncate=true)
-open(crystalconf, truncate=true)
-configureGraphene(crystalconf, bravaisconf)
-
 function getHoppingMatrixTest()
+    bravaisconf = joinpath("conf", "bravais.default.toml")
+    crystalconf = joinpath("conf", "crystal.default.toml")
     crystal = Crystal("graphene", crystalconf, bravaisconf)
     nnarrays = getPrimitiveNearestNeighbors(crystal)
     hopping = getHoppingMatrix(crystal, 1, nnarrays)
