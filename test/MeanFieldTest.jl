@@ -19,9 +19,11 @@ end
 =#
 
 function initstructest()
+    model = "hubbard model"
     crystalconf = joinpath("conf", "crystal.default.toml")
     bravaisconf = joinpath("conf", "bravais.default.toml")
-    ecrystal = ElectronCrystal("egraphene", "graphene", 2, crystalconf, bravaisconf)
+    econf = joinpath("conf", "elattice.default.toml")
+    ecrystal = ElectronCrystal(model, econf, crystalconf, bravaisconf)
     b, _ = getVecs(ecrystal)
     nbasis = size(b, 1)
     pmap = hubbardprimeslicemapgraphene(nbasis)
@@ -35,9 +37,11 @@ function initstructest()
 end
 
 function initvaluestest()
+    model = "hubbard model"
     crystalconf = joinpath("conf", "crystal.default.toml")
     bravaisconf = joinpath("conf", "bravais.default.toml")
-    ecrystal = ElectronCrystal("egraphene", "graphene", 2, crystalconf, bravaisconf)
+    econf = joinpath("conf", "elattice.default.toml")
+    ecrystal = ElectronCrystal(model, econf, crystalconf, bravaisconf)
     b, _ = getVecs(ecrystal)
     nbasis = size(b, 1)
     pmap = hubbardprimeslicemapgraphene(nbasis)

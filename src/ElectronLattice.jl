@@ -1,24 +1,35 @@
 module ElectronLattice
 using FromFile
+@from "../utils/TOMLIO.jl" using TOMLIO
 @from "CrystalLattice.jl" using CrystalLattice
-@from "CrystalLattice.jl" import CrystalLattice.getName, CrystalLattice.getVecs,
-                                 CrystalLattice.getSize
+@from "CrystalLattice.jl" import CrystalLattice.getName, 
+                                 CrystalLattice.getVecs
 export ElectronCrystal,
        getName, 
        getCrystal, 
        getVecs, 
        getStatesPerSite,
+       getLocalInteraction,
+       getNonLocalInteraction,
        getHoppingMatrixStructure
 
+const CLASSKEY = "electronlattice"
 struct ElectronCrystal
     name::String
     crystal::Crystal
+    U::Float64
+    V::Union{Float64, Vector{Float64}}
     statespersite::Int32
 end
 
-function ElectronCrystal(name::String, crystal::String, statespersite::Int, crystalfile::String, bravaisfile::String)
-    crystal = Crystal(crystal, crystalfile, bravaisfile)
-    ElectronCrystal(name, crystal, statespersite)
+function ElectronCrystal(name::String, configfile::String, crystalfile::String, bravaisfile::String)
+    config = parseconfig(configfile, CLASSKEY, name)
+    crystalname = get(config, "crystal", nothing)
+    U = get(config, "U", nothing)
+    V = get(config, "V", nothing)
+    statespersite = get(config, "statespersite", nothing)
+    crystal = Crystal(crystalname, crystalfile, bravaisfile)
+    ElectronCrystal(name, crystal, U, V, statespersite)
 end
 
 function getName(ecrystal::ElectronCrystal)
@@ -37,6 +48,14 @@ function getVecs(ecrystal::ElectronCrystal)
     crystal = getCrystal(ecrystal)
     basisvecs, bravaisvecs = getVecs(crystal)
     return basisvecs, bravaisvecs
+end
+
+function getLocalInteraction(ecrystal::ElectronCrystal)
+    return ecrystal.U
+end
+
+function getNonLocalInteraction(ecrystal::ElectronCrystal)
+    return ecrystal.v
 end
 
 # This function constructs the hopping matrix between the unit cell located at the origin and a neighboring

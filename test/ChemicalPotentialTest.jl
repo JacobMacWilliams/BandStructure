@@ -25,7 +25,8 @@ end
 function highbandTest()
     crystalconf = joinpath("conf", "crystal.default.toml")
     bravaisconf = joinpath("conf", "bravais.default.toml")
-    ecrystal = ElectronCrystal("egraphene", "graphene", 2, crystalconf, bravaisconf)
+    electronconf = joinpath("conf", "elattice.default.toml")
+    ecrystal = ElectronCrystal("hubbard model", electronconf, crystalconf, bravaisconf)
     _, bravais = getVecs(ecrystal)
 
     points = getgraphenepath()
@@ -42,9 +43,11 @@ function plothighbandTest()
 end
 
 function chemicalpotentialtest()
+    #TODO: WE ONLY NEED THE BRAVAIS VECTORS THEREFORE WE CAN JUST INSTANTIATE THE BRAVAIS LATTICE.
     crystalconf = joinpath("conf", "crystal.default.toml")
     bravaisconf = joinpath("conf", "bravais.default.toml")
-    ecrystal = ElectronCrystal("egraphene", "graphene", 2, crystalconf, bravaisconf)
+    electronconf = joinpath("conf", "elattice.default.toml")
+    ecrystal = ElectronCrystal("hubbard model", electronconf, crystalconf, bravaisconf)
 
     # Calculate energy of each k point in the BZ for both bands.
     _, bravais = getVecs(ecrystal)
