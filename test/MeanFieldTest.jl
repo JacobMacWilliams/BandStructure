@@ -19,9 +19,9 @@ end
 =#
 
 function initstructest()
-    crystalconf = joinpath("conf", "crystal.default.ini")
-    bravaisconf = joinpath("conf", "bravais.default.ini")
-    ecrystal = ElectronCrystal("egraphene", "graphene", 2, 500, crystalconf, bravaisconf)
+    crystalconf = joinpath("conf", "crystal.default.toml")
+    bravaisconf = joinpath("conf", "bravais.default.toml")
+    ecrystal = ElectronCrystal("egraphene", "graphene", 2, crystalconf, bravaisconf)
     b, _ = getVecs(ecrystal)
     nbasis = size(b, 1)
     pmap = hubbardprimeslicemapgraphene(nbasis)
@@ -35,9 +35,9 @@ function initstructest()
 end
 
 function initvaluestest()
-    crystalconf = joinpath("conf", "crystal.default.ini")
-    bravaisconf = joinpath("conf", "bravais.default.ini")
-    ecrystal = ElectronCrystal("egraphene", "graphene", 2, 500, crystalconf, bravaisconf)
+    crystalconf = joinpath("conf", "crystal.default.toml")
+    bravaisconf = joinpath("conf", "bravais.default.toml")
+    ecrystal = ElectronCrystal("egraphene", "graphene", 2, crystalconf, bravaisconf)
     b, _ = getVecs(ecrystal)
     nbasis = size(b, 1)
     pmap = hubbardprimeslicemapgraphene(nbasis)

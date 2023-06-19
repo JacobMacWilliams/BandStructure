@@ -1,7 +1,9 @@
 module BravaisLattice
 using FromFile
-@from "../utils/CrystalIO.jl" using CrystalIO: parseLatticeConf as getLattice
+@from "../utils/TOMLIO.jl" using TOMLIO
 export Bravais, getName, getDimension, getVecs
+
+const CLASSKEY = "bravais"
 
 struct Bravais
     name::String
@@ -10,9 +12,18 @@ struct Bravais
 end
 
 function Bravais(name::String, file::String)
+    config = parseconfig(file, CLASSKEY, name)
+    dim = get(config, "dim", nothing)
+    vecs = parsematrix(config, "v")
+    Bravais(name, dim, vecs)
+end
+
+#=
+function Bravais(name::String, file::String)
     dim, vecs = getLattice(file, name)
     Bravais(name, dim, vecs)
 end
+=#
 
 function getName(lattice::Bravais)
     return lattice.name

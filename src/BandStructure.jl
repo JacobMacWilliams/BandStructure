@@ -74,14 +74,14 @@ function plotGrapheneBandStructure(crystal::Crystal)
 end
 
 function main()
-  bravaisconf = joinpath(@__DIR__, "..", "conf", "bravais.ini")
+  bravaisconf = joinpath(@__DIR__, "..", "conf", "bravais.toml")
   if !ispath(bravaisconf)
-      bravaisconf = joinpath(@__DIR__, "..", "conf", "bravais.default.ini")
+      bravaisconf = joinpath(@__DIR__, "..", "conf", "bravais.default.toml")
   end
 
-  crystalconf = joinpath(@__DIR__, "..", "conf", "crystal.ini")
+  crystalconf = joinpath(@__DIR__, "..", "conf", "crystal.toml")
   if !ispath(crystalconf)
-      crystalconf = joinpath(@__DIR__, "..", "conf", "crystal.default.ini")
+      crystalconf = joinpath(@__DIR__, "..", "conf", "crystal.default.toml")
   end
 
   crystal = Crystal("graphene", crystalconf, bravaisconf)

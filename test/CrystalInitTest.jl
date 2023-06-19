@@ -1,34 +1,35 @@
 module CrystalInitTest
-using FromFile
-using Test
-@from "..\\utils\\CrystalIO.jl" using CrystalIO: writeToBravaisConf, writeToCrystalConf
+using FromFile, Test
 @from "..\\src\\CrystalLattice.jl" using CrystalLattice
-@from "..\\src\\ElectronLattice.jl" using ElectronLattice
 
-bravaisconf = joinpath("conf", "bravais.ini")
-if !ispath(bravaisconf)
-    bravaisconf = joinpath("conf", "bravais.default.ini")
+function configureGraphene()
+    vecs = zeros(2, 2)
+    vecs[1,1] = 1/2 * sqrt(3)
+    vecs[2,1] = 1/2 
+    vecs[1,2] = 1/2 * sqrt(3)
+    vecs[2,2] = -1/2
+  
+    basevecs = zeros(2,2)
+    basevecs[1,1] = 0
+    basevecs[2,1] = 0
+    basevecs[1,2] = 1 / sqrt(3)
+    basevecs[2,2] = 0
+    return basevecs, vecs
 end
 
-crystalconf = joinpath("conf", "crystal.ini")
-if !ispath(crystalconf)
-    crystalconf = joinpath("conf", "crystal.default.ini")
+function crystalBravaisInit(name::String)
+    bravaisconf = joinpath("conf", "bravais.default.toml")
+    crystalconf = joinpath("conf", "crystal.default.toml")
+    crystal = Crystal(name, crystalconf, bravaisconf)
+    _name = getName(crystal)
+    _basisvecs, _bravaisvecs = getVecs(crystal)
+    basisvecs, bravaisvecs = configureGraphene()
+    c1 = (basisvecs == _basisvecs)
+    c2 = (bravaisvecs == _bravaisvecs)
+    c3 = (lowercase(_name) == "graphene")
+    
+    return c1 && c2 && c3
 end
 
-function crystalBravaisInit(name::String, lattice::String, N::Integer, basisvecs::Matrix{Float64}, vecs::Matrix{Float64}, bfile::String, cfile::String)
-    open(bfile, truncate=true)
-    writeToBravaisConf(lattice, vecs, bfile)
-    open(cfile, truncate=true)
-    writeToCrystalConf(name, N, lattice, basisvecs, cfile)
-    crystal = Crystal(name, cfile, bfile)
-    c1 = (name == getName(crystal))
-    c2 = (lattice == getName(getLattice(crystal)))
-    c3 = (N == getSize(crystal))
-    parsedBasisVecs, parsedVecs = getVecs(crystal)
-    c4 = (basisvecs == parsedBasisVecs)
-    c5 = (vecs == parsedVecs)
-    return c1 && c2 && c3 && c4 && c5
-end
-
-@test crystalBravaisInit("testCrystal", "testLattice", 200, rand(Float64, 2, 3), rand(Float64, 2, 2), bravaisconf, crystalconf)
+@test crystalBravaisInit("graphene")
 end

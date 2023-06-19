@@ -8,20 +8,17 @@ export ElectronCrystal,
        getCrystal, 
        getVecs, 
        getStatesPerSite,
-       getSize,
-       getElectronNumber, 
        getHoppingMatrixStructure
 
 struct ElectronCrystal
     name::String
     crystal::Crystal
     statespersite::Int32
-    population::Int64
 end
 
-function ElectronCrystal(name::String, crystal::String, statespersite::Int, population::Int, crystalfile::String, bravaisfile::String)
+function ElectronCrystal(name::String, crystal::String, statespersite::Int, crystalfile::String, bravaisfile::String)
     crystal = Crystal(crystal, crystalfile, bravaisfile)
-    ElectronCrystal(name, crystal, statespersite, population)
+    ElectronCrystal(name, crystal, statespersite)
 end
 
 function getName(ecrystal::ElectronCrystal)
@@ -34,15 +31,6 @@ end
 
 function getStatesPerSite(ecrystal::ElectronCrystal)
     return ecrystal.statespersite
-end
-
-function getElectronNumber(ecrystal::ElectronCrystal)
-    return ecrystal.population
-end
-
-function getSize(ecrystal::ElectronCrystal)
-    crystal = getCrystal(ecrystal)
-    return getSize(crystal)
 end
 
 function getVecs(ecrystal::ElectronCrystal)

@@ -4,7 +4,8 @@ using LinearAlgebra: norm
 @from "BravaisLattice.jl" using BravaisLattice: Bravais
 @from "BravaisLattice.jl" import BravaisLattice.getName
 @from "BravaisLattice.jl" import BravaisLattice.getVecs
-@from "../utils/CrystalIO.jl" using CrystalIO: parseCrystalConf as getCrystal
+@from "../utils/TOMLIO.jl" using TOMLIO
+
 export Crystal,
        getName,
        getSize,
@@ -12,25 +13,24 @@ export Crystal,
        getVecs,
        getPrimitiveNearestNeighbors
 
+const CLASSKEY = "crystal"
+
 struct Crystal
   name::String
-  size::Integer
   basis::Matrix{Float64}
   lattice::Bravais
 end
 
 function Crystal(name::String, crystalfile::String, bravaisfile::String)
-  N, basisvecs, latticename = getCrystal(crystalfile, name)
-  lattice = Bravais(latticename, bravaisfile)
-  Crystal(name, N, basisvecs, lattice)
+  config = parseconfig(crystalfile, CLASSKEY, name)
+  bravaisname = get(config, "lattice", nothing)
+  basisvecs = parsematrix(config, "v")
+  lattice = Bravais(bravaisname, bravaisfile)
+  Crystal(name, basisvecs, lattice)
 end
 
 function getName(crystal::Crystal)
   return crystal.name
-end
-
-function getSize(crystal::Crystal)
-  return crystal.size
 end
 
 function getLattice(crystal::Crystal)
