@@ -1,5 +1,7 @@
 module CrystalInitTest
 using FromFile, Test
+using Plots
+@from "..\\src\\BravaisLattice.jl" using BravaisLattice
 @from "..\\src\\CrystalLattice.jl" using CrystalLattice
 
 function configureGraphene()
@@ -17,6 +19,19 @@ function configureGraphene()
     return basevecs, vecs
 end
 
+function generateLatticeSanityCheck()
+    orderstrings = ["first", "second", "third"]
+    bravaisconf = joinpath("conf", "bravais.default.toml")
+    lattice = Bravais("triangle", bravaisconf)
+    for i in 1:3
+        points = getLatticePoints(lattice, i)
+        plot = scatter(points[1, :], points[2, :])
+        pngname = orderstrings[i] * "orderpoints.png"
+        savepath = joinpath("plots", pngname)
+        savefig(plot, savepath)
+    end
+end
+
 function crystalBravaisInit(name::String)
     bravaisconf = joinpath("conf", "bravais.default.toml")
     crystalconf = joinpath("conf", "crystal.default.toml")
@@ -31,5 +46,6 @@ function crystalBravaisInit(name::String)
     return c1 && c2 && c3
 end
 
+#generateLatticeSanityCheck()
 @test crystalBravaisInit("graphene")
 end
