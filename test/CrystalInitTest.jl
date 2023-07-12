@@ -69,7 +69,7 @@ function nearestNeighborsGrapheneSanityCheck()
     # in the unit cell, we find three nearest neighbors.
     c1, c2 = true, true
     for i in 1:natoms
-        c2 = isapprox(dist[i][1], dist[i][2]) && isapprox(dist[i][2], dist[i][3])
+        c2 = isapprox(dist[1, i], dist[2, i]) && isapprox(dist[2, i], dist[3, i])
     end
 
     return c1 && c2

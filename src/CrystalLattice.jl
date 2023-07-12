@@ -77,9 +77,9 @@ function getNearestNeighborsTest(crystal, points, k)
 
   # Remove the entries for which zero distance between two points
   # is found. This corresponds to a distance measurement between
-  # a point and itself.
-  idxs = [idx[2:end] for idx in idxs]
-  dist = [d[2:end] for d in dist]
+  # a point and itself. Also reshape from vector list to matrix.
+  idxs = hcat([idx[2:end] for idx in idxs]...)
+  dist = hcat([d[2:end] for d in dist]...)
   return idxs, dist
 end
 
