@@ -11,7 +11,7 @@ function embeddingextractiontest()
     sizes = (2, 3, 2)
     embeddedtest = zeros(prod(sizes), prod(sizes))
 
-    # We know transform this iterator into that of a (2*3*2)x(2*3*2) matrix.
+    # We now transform this iterator into that of a (2*3*2)x(2*3*2) matrix.
     sum = 1
     for (tostate, fromstate) in iter
         rowcol = embedinmatrix(tostate, fromstate, sizes)
