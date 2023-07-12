@@ -18,7 +18,7 @@ struct ElectronCrystal
     name::String
     crystal::Crystal
     U::Float64
-    V::Union{Float64, Vector{Float64}}
+    V::Vector{Float64}
     statespersite::Int32
 end
 

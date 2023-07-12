@@ -3,11 +3,11 @@
     crystal = "graphene"
     statespersite = 2
     U = -0.6
-    V = 0.0
+    V = [0.0]
 
 [[electronlattice]]
     name = "cdw enhanced coupling"
     crystal = "graphene"
     statespersite = 2
     U = -0.6
-    V = 0.6
+    V = [0.6]
