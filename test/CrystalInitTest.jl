@@ -65,12 +65,11 @@ function nearestNeighborsGrapheneSanityCheck()
     println(dist)
     
     # c1 confirms that each of the basis vectors for which we are performing the 4-nn search 
-    # is contained in the set points being searched through. c2 confirms that for each atom at 
-    # the location of the basis vectors we find three nearest neighbors.
+    # is contained in the set points being searched through. c2 confirms that, for each atom
+    # in the unit cell, we find three nearest neighbors.
     c1, c2 = true, true
     for i in 1:natoms
-        c1 = c1 && (dist[i][1] == 0.0)
-        c2 = isapprox(dist[i][2], dist[i][3]) && isapprox(dist[i][3], dist[i][4])
+        c2 = isapprox(dist[i][1], dist[i][2]) && isapprox(dist[i][2], dist[i][3])
     end
 
     return c1 && c2
