@@ -55,7 +55,7 @@ function getLocalInteraction(ecrystal::ElectronCrystal)
 end
 
 function getNonLocalInteraction(ecrystal::ElectronCrystal)
-    return ecrystal.v
+    return ecrystal.V
 end
 
 # This function constructs the hopping matrix between the unit cell located at the origin and a neighboring
