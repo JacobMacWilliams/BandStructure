@@ -1,7 +1,8 @@
 module CrystalLattice
 using FromFile
 using LinearAlgebra: norm
-@from "BravaisLattice.jl" using BravaisLattice: Bravais
+using NearestNeighbors
+@from "BravaisLattice.jl" using BravaisLattice: Bravais, getLatticePoints
 @from "BravaisLattice.jl" import BravaisLattice.getName
 @from "BravaisLattice.jl" import BravaisLattice.getVecs
 @from "../utils/TOMLIO.jl" using TOMLIO
@@ -11,7 +12,9 @@ export Crystal,
        getSize,
        getLattice,
        getVecs,
-       getPrimitiveNearestNeighbors
+       getPrimitiveNearestNeighbors,
+       getPoints,
+       getNearestNeighborsTest
 
 const CLASSKEY = "crystal"
 
@@ -42,6 +45,36 @@ function getVecs(crystal::Crystal)
   bravaisvecs = getVecs(lattice)
   basisvecs = crystal.basis
   return basisvecs, bravaisvecs
+end
+
+function getCellPoints(basisvecs, bravaisvec)
+  cellpoints = hcat(Iterators.map(b -> b + bravaisvec, eachcol(basisvecs))...)
+  return cellpoints
+end
+
+function getPoints(crystal::Crystal, order)
+  lattice = getLattice(crystal)
+  latticepoints = getLatticePoints(lattice, order)
+  basisvecs, _ = getVecs(crystal)
+
+  crystalpoints = []
+  for v in eachcol(latticepoints)
+    cellpoints = getCellPoints(basisvecs, v)
+    if size(crystalpoints, 1) == 0
+      crystalpoints = cellpoints
+      continue
+    end
+    crystalpoints = hcat(crystalpoints, cellpoints)
+  end
+
+  return latticepoints, crystalpoints
+end
+ 
+function getNearestNeighborsTest(crystal, points, k)
+  basisvecs, _ = getVecs(crystal)
+  tree = KDTree(points, Euclidean())
+  idxs, dist = knn(tree, basisvecs, k, true)
+  return idxs, dist
 end
 
 # This function has a number of parameters simply because it only serves
