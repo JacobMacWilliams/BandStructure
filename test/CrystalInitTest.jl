@@ -20,29 +20,39 @@ function configureGraphene()
 end
 
 function generateLatticeSanityCheck()
+    
     orderstrings = ["first", "second", "third"]
     bravaisconf = joinpath("conf", "bravais.default.toml")
-    lattice = Bravais("triangle", bravaisconf)
+
     for i in 1:3
-        points = getLatticePoints(lattice, i)
-        plot = scatter(points[1, :], points[2, :])
-        pngname = orderstrings[i] * "orderpoints.png"
+
+        ordername = orderstrings[i]
+        latticename = "triangle-" * ordername * "-order"
+
+        lattice = Bravais(latticename, bravaisconf)
+        latticepoints = getlatticepoints(lattice)
+        plot = scatter(latticepoints[1, :], latticepoints[2, :])
+
+        pngname = ordername * "orderpoints.png"
         savepath = joinpath("plots", pngname)
         savefig(plot, savepath)
     end
 end
 
 function crystalBravaisInit(name::String)
+
     bravaisconf = joinpath("conf", "bravais.default.toml")
     crystalconf = joinpath("conf", "crystal.default.toml")
     crystal = Crystal(name, crystalconf, bravaisconf)
+
     _name = getName(crystal)
     _basisvecs, _bravaisvecs = getVecs(crystal)
+
     basisvecs, bravaisvecs = configureGraphene()
+
     c1 = (basisvecs == _basisvecs)
     c2 = (bravaisvecs == _bravaisvecs)
     c3 = (lowercase(_name) == "graphene")
-    
     return c1 && c2 && c3
 end
 
@@ -54,7 +64,7 @@ function nearestNeighborsGrapheneSanityCheck()
     # Only the unitcell at the origin an all surrounding unitcells are generated.
     # The nearest neighbors of each of the atoms of the unit cell at the origin should
     # be contained in this set.
-    latticepoints, crystalpoints = getPoints(crystal, 1)
+    latticepoints, crystalpoints = getPoints(crystal)
     basisvecs, _ = getVecs(crystal)
     natoms = size(basisvecs, 2)
 
@@ -62,7 +72,6 @@ function nearestNeighborsGrapheneSanityCheck()
     # we are searching for the nearest neighbors of a given site contains the site itself. since
     # each site will register as its own nearest neighbor we have to perform a 4-nn search.
     _, dist = getNearestNeighborsTest(crystal, crystalpoints, 4)
-    println(dist)
     
     # c1 confirms that each of the basis vectors for which we are performing the 4-nn search 
     # is contained in the set points being searched through. c2 confirms that, for each atom

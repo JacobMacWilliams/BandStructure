@@ -3,3 +3,25 @@
     v1 = [0.8660254037844386,0.5]
     v2 = [0.8660254037844386,-0.5]
     dim = 2
+    order = 1
+
+[[bravais]]   
+    name = "triangle-first-order"
+    v1 = [0.8660254037844386,0.5]
+    v2 = [0.8660254037844386,-0.5]
+    dim = 2
+    order = 1
+
+[[bravais]]   
+    name = "triangle-second-order"
+    v1 = [0.8660254037844386,0.5]
+    v2 = [0.8660254037844386,-0.5]
+    dim = 2
+    order = 2
+
+[[bravais]]   
+    name = "triangle-third-order"
+    v1 = [0.8660254037844386,0.5]
+    v2 = [0.8660254037844386,-0.5]
+    dim = 2
+    order = 3

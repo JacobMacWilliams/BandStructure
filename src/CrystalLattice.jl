@@ -2,7 +2,7 @@ module CrystalLattice
 using FromFile
 using LinearAlgebra: norm
 using NearestNeighbors
-@from "BravaisLattice.jl" using BravaisLattice: Bravais, getLatticePoints
+@from "BravaisLattice.jl" using BravaisLattice: Bravais, getlatticepoints
 @from "BravaisLattice.jl" import BravaisLattice.getName
 @from "BravaisLattice.jl" import BravaisLattice.getVecs
 @from "../utils/TOMLIO.jl" using TOMLIO
@@ -52,9 +52,9 @@ function getCellPoints(basisvecs, bravaisvec)
   return cellpoints
 end
 
-function getPoints(crystal::Crystal, order)
+function getPoints(crystal::Crystal)
   lattice = getLattice(crystal)
-  latticepoints = getLatticePoints(lattice, order)
+  latticepoints = getlatticepoints(lattice)
   basisvecs, _ = getVecs(crystal)
 
   crystalpoints = []
