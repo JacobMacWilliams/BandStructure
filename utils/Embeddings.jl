@@ -43,7 +43,7 @@ function extractfromlist(state::Int, sizes)
             continue
         end
 
-        steps = stepsleft / smallstep
+        steps = Int(stepsleft / smallstep)
         extstate[i] = steps
         counted += stepsleft
 
