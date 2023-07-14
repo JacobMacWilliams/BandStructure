@@ -43,7 +43,6 @@ function embeddingextractiontest()
         ij = Tuple(i)
         idx = extractfromatrix(ij[1], ij[2], tosizes, fromsizes)
         push!(recoveredidx, idx)
-        println(idx)
     end
 
     expidx = collect(Iterators.product(1:2, 1:3, 1:2, 1:2, 1:3, 1:2))
