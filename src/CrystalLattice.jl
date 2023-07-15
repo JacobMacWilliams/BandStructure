@@ -77,10 +77,28 @@ function getNearestNeighborsTest(crystal, points, k)
 
   # Remove the entries for which zero distance between two points
   # is found. This corresponds to a distance measurement between
-  # a point and itself. Also reshape from vector list to matrix.
-  idxs = hcat([idx[2:end] for idx in idxs]...)
-  dist = hcat([d[2:end] for d in dist]...)
-  return idxs, dist
+  # a point and itself.
+  idxs = [idx[2:end] for idx in idxs]
+  nnlabels = [labelneighbors(d) for d in dist[2:end]]
+  
+  return idxs, nnlabels
+end
+
+function labelneighbors(dist)
+
+  len = length(dist)
+  label = 1
+  neighborlabels = [label]
+
+  dlast = dist[1]
+  for i in 2:len
+    dnext = dist[i]
+    !isapprox(dnext, dlast) ? label+=1 : nothing
+    neighborlabels[i] = label
+    dlast = dnext
+  end
+
+  return neighborlabels
 end
 
 # This function has a number of parameters simply because it only serves
