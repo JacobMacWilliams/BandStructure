@@ -4,6 +4,7 @@ using FromFile, Test
 @from "../src/MeanField.jl" using MeanField
 @from "../src/ElectronLattice.jl" using ElectronLattice
 @from "../src/CrystalLattice.jl" using CrystalLattice
+@from "../utils/Embeddings.jl" using Embeddings
 
 #=
 function initest(cfile, bfile)
@@ -24,15 +25,14 @@ function initstructest()
     bravaisconf = joinpath("conf", "bravais.default.toml")
     econf = joinpath("conf", "elattice.default.toml")
     ecrystal = ElectronCrystal(model, econf, crystalconf, bravaisconf)
-    b, _ = getVecs(ecrystal)
-    nbasis = size(b, 1)
-    pmap = hubbardprimeslicemapgraphene(nbasis)
-    #pvmap = Dict([(2, (0.15, 0.75)), (3, (0.15, 0.25))])
-    mf = FieldCorrelator(ecrystal, pmap, true)
-    initmfstruct!(mf)
+    mf = FieldCorrelator(ecrystal)
 
-    expstruct = [2 3 1 1; 3 2 1 1; 1 1 2 3; 1 1 3 2]
     correlator = getcorrelator(mf)
+    correlator = reshape(correlator, (2*2*5, 2*2))
+    correlator[1:4, 1:4]
+    expstruct = ones(2*2*5, 2*2)
+    expstruct[1:4, 1:4] = [2 3 1 1; 3 2 1 1; 1 1 2 3; 1 1 3 2]
+    #correlator = getcorrelator(mf)
     return (expstruct == correlator)
 end
 
