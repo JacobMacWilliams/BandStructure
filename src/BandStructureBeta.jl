@@ -133,7 +133,7 @@ function meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnl
     nextcorrelator = zeros(size(correlator))
     kpoints = discretehexagon(0.05, "constantstep")
     energies = []
-    for k in eachcol(kpoints)
+    for k in kpoints
        bloch = getblochmatrix(atomspercell, hoppingmatrices, k, latticepoints)
        blochfactors = eigen(bloch)
        eks = blochfactors.values
@@ -215,7 +215,7 @@ function gethoppingmatrix(ecrystal::ElectronCrystal, correlator, siteidx::Int, n
     return hopping
 end
 
-function getblochmatrix(atomspercell::Int, hopmats::Matrix{Float64}, k::Vector{Float64}, latticepoints::Matrix{Float64})
+function getblochmatrix(atomspercell::Int, hopmats, k::Vector{Float64}, latticepoints::Matrix{Float64})
   
     bloch = zeros(2*atomspercell, 2*atomspercell)
     for (i, point) in enumerate(eachcol(latticepoints))
