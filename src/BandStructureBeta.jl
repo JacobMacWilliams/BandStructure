@@ -97,7 +97,7 @@ function plotbandstructure(energies)
     plt = plot()
     for i in 1:nbands
         band = [e[i] for e in energies]
-        plot!(plt, band, steps)
+        plot!(plt, steps, band)
     end
 
     savepath = joinpath("plots", "hubbardmodel.png")
