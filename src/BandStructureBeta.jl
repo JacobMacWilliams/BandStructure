@@ -199,9 +199,6 @@ function gethoppingmatrix(ecrystal::ElectronCrystal, correlator, siteidx::Int, n
             neighbororder = nnlabels[b1][idx]
             if neighbororder <= length(V)
                 coloumb = V[neighbororder]
-                if correlator[s2, b2, siteidx, s1, b1] == 0.0
-                    error("Sanity check failed.")
-                end
                 hopping[s2, b2, s1, b1] += - coloumb * conj(correlator[s2, b2, siteidx, s1, b1])
             end
 
