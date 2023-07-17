@@ -47,8 +47,6 @@ function main(modelname::String, configfiles::Vector{String})
         push!(idxs_ij, ij)
     end
 
-  
-    
     mu = 0.0
     beta = 100.0
     fill = 0.5
@@ -68,14 +66,7 @@ function main(modelname::String, configfiles::Vector{String})
         push!(es, eigvals)
     end
     
-    plt = scatter(1, 0.0) ## DUMMY POINT
-    for (i, e) in enumerate(es)
-        scatter!(i, e[1])
-        scatter!(i, e[2])
-    end
-
-    savepath = joinpath("plots", "hubbardmodel.png")
-    savefig(plt, savepath)
+    plotbandstructure(es)
     # TEST CODE
     #=
     c = true
@@ -98,26 +89,18 @@ function main(modelname::String, configfiles::Vector{String})
     =#
 end
 
-function calculateGrapheneBandStructure(crystal::Crystal)
-  if getName(crystal) != "graphene"
-    return
-  end
+function plotbandstructure(energies)
+    nbands = length(energies[1])
+    steps = [i for i in 1:length(energies)]
 
-  nnarrays = getPrimitiveNearestNeighbors(crystal)
-  points = getgraphenepath()
-  
-  x = []
-  z1 = []
-  z2 = []
-  for (i, point) in enumerate(points)
-    push!(x, i)
-    eigvalues = getBlochMatrix(point, crystal, nnarrays)
-    push!(z1, eigvalues[1])
-    push!(z2, eigvalues[2])
-  end
+    plt = plot()
+    for i in 1:nbands
+        band = [e[i] for e in energies]
+        plot!(plt, band, steps)
+    end
 
-  return x, z1, z2
-
+    savepath = joinpath("plots", "hubbardmodel.png")
+    savefig(plt, savepath)
 end
 
 function meanfielditeration(ecrystal, latticepoints, nnidxs, nnlabels, mu, beta, fillfactor)
@@ -280,35 +263,6 @@ function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, co
     end  
 end
 
-#=
-function nearestneigborsplay()
-    electronconf = joinpath("..", "conf", "elattice.default.toml")
-    bravaisconf = joinpath("..", "conf", "bravais.default.toml")
-    crystalconf = joinpath("..", "conf", "crystal.default.toml")
-    ecrystal = ElectronCrystal(model, electronconf, crystalconf, bravaisconf)
-    crystal = getCrystal(ecrystal)
-
-    coulomb = getNonLocalInteraction(ecrystal)
-    order = size(coulomb, 1) #TODO: Doesn't work so long as coulomb is integer
-    bravais, crystal = getPoints(crystal, order)
-    idx, dist = getNearestNeighborsTest(crystal)
-    idx = parseknearest(idx, dist)
-    
-    #=
-    EXTRACT APPROPRIATE NEAREST NEIGHBORS FROM LIST
-
-    FROM EACH IDX FROM LIST WITH SIZES SIZE(BRAVAIS), SIZE(BASIS) THIS WILL GIVE ME THE INDEX OF BRAVAIS AND 
-    BASIS USED TO GET THE point
-
-    I WILL THEN HAVE THE CORRESPONDING IJ INDICES 
-
-    FOR CONSTRUCTING THE HOPPING MATRIX I CAN JUST SEE IF IJ IS ONE OF THE NEIGHBORS, IF IT IS ADD APPROPRIATE CORRECTIONS
-    =#
-
-    
-
-end
-=#
 bravaisconf = joinpath("conf", "bravais.default.toml")
 crystalconf = joinpath("conf", "crystal.default.toml")
 electronconf = joinpath("conf", "elattice.default.toml")
