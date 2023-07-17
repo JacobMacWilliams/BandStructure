@@ -63,8 +63,8 @@ function main(modelname::String, configfiles::Vector{String})
     es = []
     for k in points
         bloch = getblochmatrix(atomspercell, hoppingmatrices, k, latticepoints)
-        eigvals = eigvals(bloch)
-        push!(es, eigvals)
+        eigvalues = eigvals(bloch)
+        push!(es, eigvalues)
     end
     
     plotbandstructure(es)
