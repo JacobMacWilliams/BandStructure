@@ -46,6 +46,7 @@ function main(modelname::String, configfiles::Vector{String})
         ij = collect(Iterators.map(idx -> extractfromlist(idx, dof), idxs))
         push!(idxs_ij, ij)
     end
+    println(idxs_ij)
 
     mu = 0.0
     beta = 100.0
@@ -108,10 +109,10 @@ function meanfielditeration(ecrystal, latticepoints, nnidxs, nnlabels, mu, beta,
     mf = FieldCorrelator(ecrystal)
     pvmap = Dict([(1, 0.0), (2, (0.15, 0.75)), (3, (0.15, 0.25))])
     initmfvalues!(mf, pvmap)
-    correlator = getfieldcorrelator(mf)
-    diffs = [10.0]
+    correlator = getcorrelator(mf)
+    diffs = [0.0, 10.0]
 
-    while (diff[end] - diff[end - 1]) > 0.00001 && length(diffs) < 10000
+    while (diffs[end] - diffs[end - 1]) > 0.00001 && length(diffs) < 10000
         diff, correlator, energies = meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnlabels, mu, beta)
         mu = chempot(2, fillfactor, beta, mu, energies)
         push!(diffs, diff)
@@ -146,7 +147,7 @@ function meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnl
     return diff, nextcorrelator, energies
 end
 
-function gethoppingmatrix(ecrystal::ElectronCrystal, correlator, siteidx::Int, nnidxs::Matrix{Int}, nnlabels::Matrix{Int})
+function gethoppingmatrix(ecrystal::ElectronCrystal, correlator, siteidx::Int, nnidxs, nnlabels)
     basisvecs, _ = getVecs(ecrystal)
     atomspercell = size(basisvecs, 2)
 
@@ -155,7 +156,8 @@ function gethoppingmatrix(ecrystal::ElectronCrystal, correlator, siteidx::Int, n
     
     hopping = zeros(2, atomspercell, 2, atomspercell)
 
-    for (s2, b2, s1, b1) in CartesianIndex(hopping)
+    for i in CartesianIndices(hopping)
+        (s2, b2, s1, b1) = Tuple(i)
         # Handling spin flip and potential correction        
         if (siteidx == 1)
 
