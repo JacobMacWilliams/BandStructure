@@ -229,7 +229,7 @@ function getblochmatrix(atomspercell::Int, hopmats, k::Vector{Float64}, latticep
     return bloch
 end
 
-function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, correlator::Array{Float64}, newcorrelator::Array{ComplexF64}, eigenvalues::Vector{Float64}, mu::Float64, beta::Float64, diagonaltrafo)
+function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, correlator, newcorrelator, eigenvalues::Vector{Float64}, mu::Float64, beta::Float64, diagonaltrafo)
     crystal = getCrystal(ecrystal)
     latticepoints, crystalpoints = getPoints(crystal)
     basisvecs, _ = getVecs(ecrystal)
