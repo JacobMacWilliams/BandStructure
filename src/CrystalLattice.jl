@@ -94,7 +94,7 @@ function labelneighbors(dist)
   for i in 2:len
     dnext = dist[i]
     !isapprox(dnext, dlast) ? label+=1 : nothing
-    neighborlabels[i] = label
+    push!(neighborlabels, label)
     dlast = dnext
   end
 
