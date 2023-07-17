@@ -114,7 +114,7 @@ function meanfielditeration(ecrystal, latticepoints, nnidxs, nnlabels, mu, beta,
 
     while (diffs[end] - diffs[end - 1]) > 0.00001 && length(diffs) < 10000
         diff, correlator, energies = meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnlabels, mu, beta)
-        mu = chempot(2, fillfactor, beta, mu, energies)
+        mu = findchempot(2, fillfactor, beta, energies)
         push!(diffs, diff)
     end
 
