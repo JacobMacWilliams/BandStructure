@@ -46,7 +46,6 @@ function main(modelname::String, configfiles::Vector{String})
         ij = collect(Iterators.map(idx -> extractfromlist(idx, dof), idxs))
         push!(idxs_ij, ij)
     end
-    println(idxs_ij)
 
     mu = 0.0
     beta = 100.0
@@ -190,12 +189,14 @@ function gethoppingmatrix(ecrystal::ElectronCrystal, correlator, siteidx::Int, n
 
         # HANDLING HOPPING AND HOPPING CORRECTIONS
         atomidx = (b2, siteidx)
-        idx =  findnext(nnidxs[b1][1:end], atomidx)
+        isatomidx(x::Tuple) = (x == atomidx)
+        idx =  findnext(isatomidx, nnidxs[b1][1:end], 1)
+
         if idx === nothing
             hopping[s2, b2, s1, b1] = 0
             continue
         else
-            neighbororder = nnlabels[idx]
+            neighbororder = nnlabels[b1][idx]
             if neighbororder <= length(V)
                 coloumb = V[neighbororder]
                 if correlator[s2, b2, siteidx, s1, b1] == 0.0
