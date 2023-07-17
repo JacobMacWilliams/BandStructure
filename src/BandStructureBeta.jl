@@ -7,6 +7,7 @@ using Plots
 @from "MeanField.jl" using MeanField
 @from "Corrections.jl" using Corrections
 @from "ChemicalPotential.jl" using ChemicalPotential
+@from "../utils/Distributions.jl" using Distributions
 @from "../utils/Embeddings.jl" using Embeddings
 @from "../utils/Reciprocal.jl" using Reciprocal
 
@@ -130,7 +131,7 @@ function meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnl
     end
 
     # BEGIN MEAN FIELD ITERATION
-    nextcorrelator = zeros(size(correlator))
+    nextcorrelator = zeros(Complex{Float64}, size(correlator))
     kpoints = discretehexagon(0.05, "constantstep")
     energies = []
     for k in kpoints
@@ -228,7 +229,7 @@ function getblochmatrix(atomspercell::Int, hopmats, k::Vector{Float64}, latticep
     return bloch
 end
 
-function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, correlator::Array{Float64}, newcorrelator::Array{Float64}, eigenvalues::Vector{Float64}, mu::Float64, beta::Float64, diagonaltrafo)
+function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, correlator::Array{Float64}, newcorrelator::Array{ComplexF64}, eigenvalues::Vector{Float64}, mu::Float64, beta::Float64, diagonaltrafo)
     crystal = getCrystal(ecrystal)
     latticepoints, crystalpoints = getPoints(crystal)
     basisvecs, _ = getVecs(ecrystal)
@@ -236,10 +237,10 @@ function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, co
     atomspercell = size(basisvecs, 1)
     latticesize = size(latticepoints, 2)
     latticedof = (atomspercell, latticesize)
-    sitedof = (2, atomspersite)
+    sitedof = (2, atomspercell)
 
-    for (s2, b2, r2, s1, b1) in CartesianIndices(correlator)
-
+    for i in CartesianIndices(correlator)
+        (s2, b2, r2, s1, b1) = Tuple(i)
         if correlator[s2, b2, r2, s1, b1] == 0.0
             continue;
         end
@@ -260,7 +261,7 @@ function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, co
             fromstateidx = (s1, b1)
 
             tostateidx, fromstateidx = embedinmatrix(tostateidx, fromstateidx, sitedof, sitedof)
-            newcorrelator[s2, b2, r2, s1, b1] += exptopoint * expfrompoint * n * diagonaltrafo[n, fromstateidx] * adjoint(diagonaltrafo)[tostateidx, n]
+            newcorrelator[s2, b2, r2, s1, b1] += exptopoint * expfrompoint * n * diagonaltrafo[i, fromstateidx] * adjoint(diagonaltrafo)[tostateidx, i]
         end
     end  
 end
