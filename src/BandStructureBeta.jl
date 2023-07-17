@@ -112,10 +112,13 @@ function meanfielditeration(ecrystal, latticepoints, nnidxs, nnlabels, mu, beta,
     correlator = getcorrelator(mf)
     diffs = [0.0, 10.0]
 
+    iteration = 1
     while (diffs[end] - diffs[end - 1]) > 0.00001 && length(diffs) < 10000
         diff, correlator, energies = meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnlabels, mu, beta)
         mu = findchempot(2, fillfactor, beta, energies)
         push!(diffs, diff)
+        println("Iteration " * string(iteration) * ":" * " difference = " * string(diff))
+        iteration += 1
     end
 
     return correlator
@@ -145,8 +148,46 @@ function meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnl
        correlatorupdatestep!(ecrystal, k, correlator, nextcorrelator, eks, mu, beta, todiagonalbase)
     end
     energies = hcat(energies...)
-    diff = norm(correlator - nextcorrelator)
+    
+    diff = sum(broadcast(abs, correlator - nextcorrelator))
     return diff, nextcorrelator, energies
+end
+
+function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, correlator, newcorrelator, eigenvalues::Vector{Float64}, mu::Float64, beta::Float64, diagonaltrafo)
+    crystal = getCrystal(ecrystal)
+    latticepoints, crystalpoints = getPoints(crystal)
+    basisvecs, _ = getVecs(ecrystal)
+    
+    atomspercell = size(basisvecs, 1)
+    latticesize = size(latticepoints, 2)
+    latticedof = (atomspercell, latticesize)
+    sitedof = (2, atomspercell)
+
+    for i in CartesianIndices(correlator)
+        (s2, b2, r2, s1, b1) = Tuple(i)
+        if correlator[s2, b2, r2, s1, b1] == 0.0
+            continue;
+        end
+
+        tositeidx = (b2, r2)
+        fromsiteidx = (b1, 1)
+        
+        toidx, fromidx = embedinmatrix(tositeidx, fromsiteidx, latticedof, latticedof)
+        
+        topoint = crystalpoints[:, toidx]
+        frompoint = crystalpoints[:, fromidx]
+
+        for (i, e) in enumerate(eigenvalues)
+            exptopoint = exp(i * dot(k, topoint))
+            expfrompoint = exp(- i * dot(k, frompoint))
+            n = fermidistribution(e, mu, beta)
+            tostateidx = (s2, b2)
+            fromstateidx = (s1, b1)
+
+            tostateidx, fromstateidx = embedinmatrix(tostateidx, fromstateidx, sitedof, sitedof)
+            newcorrelator[s2, b2, r2, s1, b1] += exptopoint * expfrompoint * n * diagonaltrafo[i, fromstateidx] * adjoint(diagonaltrafo)[tostateidx, i]
+        end
+    end  
 end
 
 function gethoppingmatrix(ecrystal::ElectronCrystal, correlator, siteidx::Int, nnidxs, nnlabels)
@@ -229,42 +270,7 @@ function getblochmatrix(atomspercell::Int, hopmats, k::Vector{Float64}, latticep
     return bloch
 end
 
-function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, correlator, newcorrelator, eigenvalues::Vector{Float64}, mu::Float64, beta::Float64, diagonaltrafo)
-    crystal = getCrystal(ecrystal)
-    latticepoints, crystalpoints = getPoints(crystal)
-    basisvecs, _ = getVecs(ecrystal)
-    
-    atomspercell = size(basisvecs, 1)
-    latticesize = size(latticepoints, 2)
-    latticedof = (atomspercell, latticesize)
-    sitedof = (2, atomspercell)
 
-    for i in CartesianIndices(correlator)
-        (s2, b2, r2, s1, b1) = Tuple(i)
-        if correlator[s2, b2, r2, s1, b1] == 0.0
-            continue;
-        end
-
-        tositeidx = (b2, r2)
-        fromsiteidx = (b1, 1)
-        
-        toidx, fromidx = embedinmatrix(tositeidx, fromsiteidx, latticedof, latticedof)
-        
-        topoint = crystalpoints[:, toidx]
-        frompoint = crystalpoints[:, fromidx]
-
-        for (i, e) in enumerate(eigenvalues)
-            exptopoint = exp(i * dot(k, topoint))
-            expfrompoint = exp(- i * dot(k, frompoint))
-            n = fermidistribution(e, mu, beta)
-            tostateidx = (s2, b2)
-            fromstateidx = (s1, b1)
-
-            tostateidx, fromstateidx = embedinmatrix(tostateidx, fromstateidx, sitedof, sitedof)
-            newcorrelator[s2, b2, r2, s1, b1] += exptopoint * expfrompoint * n * diagonaltrafo[i, fromstateidx] * adjoint(diagonaltrafo)[tostateidx, i]
-        end
-    end  
-end
 
 bravaisconf = joinpath("conf", "bravais.default.toml")
 crystalconf = joinpath("conf", "crystal.default.toml")
