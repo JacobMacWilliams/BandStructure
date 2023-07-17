@@ -30,7 +30,7 @@ function FieldCorrelator(ecrystal::ElectronCrystal)
     # the correlations between unit cell i and unit cell j depend only on their relative displacement.
     # The entire information of the two point correlator is contained in the set of two point correlators
     # between the unit cell at the origin and all other unit cells in the crystal.
-    correlator = ones(nspins, nbasis, ncells, nspins, nbasis)
+    correlator = ones(ComplexF64, nspins, nbasis, ncells, nspins, nbasis)
     idx = CartesianIndices(correlator)
     primemap = hubbardslices(idx)
     initmfstruct!(correlator, primemap)
