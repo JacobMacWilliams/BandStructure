@@ -105,7 +105,7 @@ end
 
 function meanfielditeration(ecrystal, latticepoints, nnidxs, nnlabels, mu, beta, fillfactor)
       
-    mf = FieldCorrelator(ecrystal, hubbardslices)
+    mf = FieldCorrelator(ecrystal)
     pvmap = Dict([(1, 0.0), (2, (0.15, 0.75)), (3, (0.15, 0.25))])
     initmfvalues!(mf, pvmap)
     correlator = getfieldcorrelator(mf)
