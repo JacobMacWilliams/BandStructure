@@ -121,6 +121,8 @@ function meanfielditeration(ecrystal, latticepoints, nnidxs, nnlabels, mu, beta,
 end
 function meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnlabels, mu, beta)
     
+    atomspercell = size(getVecs(ecrystal)[1], 2)
+
     hoppingmatrices = []
     for i in 1:length(eachcol(latticepoints))
         hopping = gethoppingmatrix(ecrystal, correlator, i, nnidxs, nnlabels)
