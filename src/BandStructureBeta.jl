@@ -49,8 +49,8 @@ function main(modelname::String, configfiles::Vector{String})
     end
 
     mu = 0.0
-    beta = 100.0
-    fill = 0.5
+    beta = 0.2
+    fill = 0.49
     correlator = meanfielditeration(ecrystal, latticepoints, idxs_ij, nnlabels, mu, beta, fill)
 
     hoppingmatrices = []
@@ -113,7 +113,7 @@ function meanfielditeration(ecrystal, latticepoints, nnidxs, nnlabels, mu, beta,
     diffs = [0.0, 10.0]
 
     iteration = 1
-    while (diffs[end] - diffs[end - 1]) > 0.00001 && length(diffs) < 10000
+    while abs(diffs[end] - diffs[end - 1]) > 0.00001 && length(diffs) < 10000
         diff, correlator, energies = meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnlabels, mu, beta)
         mu = findchempot(2, fillfactor, beta, energies)
         push!(diffs, diff)
@@ -148,7 +148,7 @@ function meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnl
        correlatorupdatestep!(ecrystal, k, correlator, nextcorrelator, eks, mu, beta, todiagonalbase)
     end
     energies = hcat(energies...)
-    
+
     diff = sum(broadcast(abs, correlator - nextcorrelator))
     return diff, nextcorrelator, energies
 end
@@ -166,7 +166,7 @@ function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, co
     for i in CartesianIndices(correlator)
         (s2, b2, r2, s1, b1) = Tuple(i)
         if correlator[s2, b2, r2, s1, b1] == 0.0
-            continue;
+            continue
         end
 
         tositeidx = (b2, r2)
