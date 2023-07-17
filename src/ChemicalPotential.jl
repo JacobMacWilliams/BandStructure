@@ -6,7 +6,7 @@ using Roots
 export findchempot
 
 function chempot(bands::Int, fill::Float64, beta::Float64, mu::Float64, energies)
-    size = length(energies) / 2
+    size = length(energies) / bands
     N = 0
     for e in energies
         N += fermidistribution(e, mu, beta)
