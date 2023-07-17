@@ -129,7 +129,7 @@ function meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnl
 
     # BEGIN MEAN FIELD ITERATION
     nextcorrelator = zeros(size(correlator))
-    kpoints = discretehexagontest(0.05, "constantstep")
+    kpoints = discretehexagon(0.05, "constantstep")
     energies = []
     for k in eachcol(kpoints)
        bloch = getblochmatrix(atomspercell, hoppingmatrices, k, latticepoints)
