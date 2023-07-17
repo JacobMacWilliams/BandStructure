@@ -33,7 +33,7 @@ function extractfromlist(state::Int, sizes)
     smallstep = 1
     counted = 0
     
-    extstate = zeros(length(sizes))
+    extstate = zeros(Int, length(sizes))
     for (i, n) in enumerate(sizes)
         
         largestep = n * smallstep
