@@ -73,13 +73,13 @@ end
 function getNearestNeighborsTest(crystal, points, k)
   basisvecs, _ = getVecs(crystal)
   tree = KDTree(points, Euclidean())
-  idxs, dist = knn(tree, basisvecs, k, true)
+  idxs, dists = knn(tree, basisvecs, k, true)
 
   # Remove the entries for which zero distance between two points
   # is found. This corresponds to a distance measurement between
   # a point and itself.
   idxs = [idx[2:end] for idx in idxs]
-  nnlabels = [labelneighbors(d) for d in dist[2:end]]
+  nnlabels = [labelneighbors(d[2:end]) for d in dists]
   
   return idxs, nnlabels
 end
