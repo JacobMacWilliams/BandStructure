@@ -156,7 +156,7 @@ function gethoppingmatrix(ecrystal::ElectronCrystal, correlator, siteidx::Int, n
     U = getLocalInteraction(ecrystal)
     V = getNonLocalInteraction(ecrystal)
     
-    hopping = zeros(2, atomspercell, 2, atomspercell)
+    hopping = zeros(ComplexF64, 2, atomspercell, 2, atomspercell)
 
     for i in CartesianIndices(hopping)
         (s2, b2, s1, b1) = Tuple(i)
