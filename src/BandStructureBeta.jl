@@ -247,7 +247,6 @@ function gethoppingmatrix(ecrystal::ElectronCrystal, correlator, siteidx::Int, n
         idx =  findnext(isatomidx, nnidxs[b1][1:end], 1)
 
         if idx === nothing
-            hopping[s2, b2, s1, b1] = 0
             continue
         else
             neighbororder = nnlabels[b1][idx]
