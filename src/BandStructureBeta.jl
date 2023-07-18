@@ -108,7 +108,7 @@ end
 function meanfielditeration(ecrystal, latticepoints, nnidxs, nnlabels, mu, beta, fillfactor)
       
     mf = FieldCorrelator(ecrystal)
-    pvmap = Dict([(1, 0.0), (2, 1.0), (3, 1.0)])
+    pvmap = Dict([(1, -1.0), (2, 0.0), (3, 1.0)])
     initmfvalues!(mf, pvmap)
     correlator = getcorrelator(mf)
     diffs = [0.0, 10.0]
@@ -170,7 +170,7 @@ function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, co
 
     for i in CartesianIndices(correlator)
         (s2, b2, r2, s1, b1) = Tuple(i)
-        if correlator[s2, b2, r2, s1, b1] == 0.0
+        if correlator[s2, b2, r2, s1, b1] == -1.0
             continue
         end
 
