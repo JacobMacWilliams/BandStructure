@@ -108,7 +108,7 @@ end
 function meanfielditeration(ecrystal, latticepoints, nnidxs, nnlabels, mu, beta, fillfactor)
       
     mf = FieldCorrelator(ecrystal)
-    pvmap = Dict([(1, 0.0), (2, (0.15, 0.75)), (3, (0.15, 0.25))])
+    pvmap = Dict([(1, 0.0), (2, 1.0), (3, 1.0)])
     initmfvalues!(mf, pvmap)
     correlator = getcorrelator(mf)
     diffs = [0.0, 10.0]
@@ -124,6 +124,7 @@ function meanfielditeration(ecrystal, latticepoints, nnidxs, nnlabels, mu, beta,
 
     return correlator
 end
+
 function meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnlabels, mu, beta)
     
     atomspercell = size(getVecs(ecrystal)[1], 2)
