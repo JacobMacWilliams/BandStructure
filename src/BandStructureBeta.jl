@@ -49,8 +49,9 @@ function main(modelname::String, configfiles::Vector{String})
     end
 
     mu = 0.0
-    beta = 0.2
-    fill = 0.49
+    beta = 0.01
+    fill = 0.499999999
+
     correlator = meanfielditeration(ecrystal, latticepoints, idxs_ij, nnlabels, mu, beta, fill)
 
     hoppingmatrices = []
