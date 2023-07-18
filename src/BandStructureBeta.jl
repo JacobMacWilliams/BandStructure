@@ -143,14 +143,21 @@ function meanfielditerationstep(ecrystal, correlator, latticepoints, kpoints, nn
     nk = length(kpoints)
 
     for k in kpoints
-       bloch = getblochmatrix(atomspercell, hoppingmatrices, k, latticepoints)
-       blochfactors = eigen(bloch)
-       eks = blochfactors.values
-       push!(energies, eks)
+        bloch = getblochmatrix(atomspercell, hoppingmatrices, k, latticepoints)
+        blochfactors = eigen(bloch)
+        eks = blochfactors.values
+        
+        imeks = broadcast(imag, eks)
+        if any(imeks .> 1e-12)
+            error("Non-negligible imaginary energy value for hermitian operator was found.")
+        end
 
-       fromdiagonalbase = blochfactors.vectors
-       todiagonalbase = adjoint(fromdiagonalbase) # Unnecessary transformation
-       correlatorupdatestep!(ecrystal, k, correlator, nextcorrelator, eks, mu, beta, todiagonalbase, nk)
+        eks = broadcast(real, eks)
+        push!(energies, eks)
+
+        fromdiagonalbase = blochfactors.vectors
+        todiagonalbase = adjoint(fromdiagonalbase) # Unnecessary transformation
+        correlatorupdatestep!(ecrystal, k, correlator, nextcorrelator, eks, mu, beta, todiagonalbase, nk)
     end
     energies = hcat(energies...)
 
