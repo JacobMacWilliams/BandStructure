@@ -66,6 +66,11 @@ function main(modelname::String, configfiles::Vector{String})
     for k in points
         bloch = getblochmatrix(atomspercell, hoppingmatrices, k, latticepoints)
         eigvalues = eigvals(bloch)
+        imeigvalues = broadcast(imag, eigvalues)
+        if any(imeigvalues .> 1e-12)
+            error("Non-negligible imaginary energy value for hermitian operator was found.")
+        end
+        eigvalues = broadcast(real, eigvalues)
         push!(es, eigvalues)
     end
     
@@ -179,6 +184,7 @@ function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, co
     for i in CartesianIndices(correlator)
         (s2, b2, r2, s1, b1) = Tuple(i)
         if correlator[s2, b2, r2, s1, b1] == -1.0
+            newcorrelator[s2, b2, r2, s1, b1] = -1.0
             continue
         end
 
