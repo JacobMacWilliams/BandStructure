@@ -161,8 +161,8 @@ function meanfielditerationstep(ecrystal, correlator, latticepoints, kpoints, nn
         push!(energies, eks)
 
         fromdiagonalbase = blochfactors.vectors
-        todiagonalbase = adjoint(fromdiagonalbase) # Unnecessary transformation
-        correlatorupdatestep!(ecrystal, k, correlator, nextcorrelator, eks, mu, beta, todiagonalbase, nk)
+        #todiagonalbase = adjoint(fromdiagonalbase) # Unnecessary transformation
+        correlatorupdatestep!(ecrystal, k, correlator, nextcorrelator, eks, mu, beta, fromdiagonalbase, nk)
     end
     energies = hcat(energies...)
 
@@ -196,15 +196,15 @@ function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, co
         topoint = crystalpoints[:, toidx]
         frompoint = crystalpoints[:, fromidx]
 
-        for (i, e) in enumerate(eigenvalues)
-            exptopoint = exp(i * dot(k, topoint))
-            expfrompoint = exp(- i * dot(k, frompoint))
+        for (j, e) in enumerate(eigenvalues)
+            exptopoint = exp(im * dot(k, topoint))
+            expfrompoint = exp(- im * dot(k, frompoint))
             n = fermidistribution(e, mu, beta)
             tostateidx = (s2, b2)
             fromstateidx = (s1, b1)
 
             tostateidx, fromstateidx = embedinmatrix(tostateidx, fromstateidx, sitedof, sitedof)
-            newcorrelator[s2, b2, r2, s1, b1] += exptopoint * expfrompoint * n * diagonaltrafo[i, fromstateidx] * adjoint(diagonaltrafo)[tostateidx, i] / nk
+            newcorrelator[s2, b2, r2, s1, b1] += exptopoint * expfrompoint * n * diagonaltrafo[fromstateidx, j] * conj(diagonaltrafo[tostateidx, j]) / nk
         end
     end  
 end
