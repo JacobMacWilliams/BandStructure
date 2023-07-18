@@ -95,7 +95,7 @@ end
 =#
 
 function hubbardslices(idxitr)
-    unoccupied(i) = ((2, 1, 1, 2, 1) == Tuple(i)) || ((1, 2, 1, 1, 2) == Tuple(i)) || (Tuple(i)[1] != Tuple(i)[4] && Tuple(i)[2] == Tuple(i)[5])
+    unoccupied(i) = ((2, 1, 1, 2, 1) == Tuple(i)) || ((1, 2, 1, 1, 2) == Tuple(i)) || (Tuple(i)[1] != Tuple(i)[4] && Tuple(i)[2] == Tuple(i)[5] && Tuple(i)[3] == 1)
     occupied(i) = ((1, 1, 1, 1, 1) == Tuple(i)) || ((2, 2, 1, 2, 2) == Tuple(i))
 
     unoccupiedidxs = filter(unoccupied, idxitr)
