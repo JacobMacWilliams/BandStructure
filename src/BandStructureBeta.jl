@@ -139,6 +139,8 @@ function meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnl
     nextcorrelator = zeros(Complex{Float64}, size(correlator))
     kpoints = discretehexagon(0.05, "constantstep")
     energies = []
+    nk = length(kpoints)
+
     for k in kpoints
        bloch = getblochmatrix(atomspercell, hoppingmatrices, k, latticepoints)
        blochfactors = eigen(bloch)
@@ -147,7 +149,7 @@ function meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnl
 
        fromdiagonalbase = blochfactors.vectors
        todiagonalbase = adjoint(fromdiagonalbase) # Unnecessary transformation
-       correlatorupdatestep!(ecrystal, k, correlator, nextcorrelator, eks, mu, beta, todiagonalbase)
+       correlatorupdatestep!(ecrystal, k, correlator, nextcorrelator, eks, mu, beta, todiagonalbase, nk)
     end
     energies = hcat(energies...)
 
@@ -155,7 +157,8 @@ function meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnl
     return diff, nextcorrelator, energies
 end
 
-function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, correlator, newcorrelator, eigenvalues::Vector{Float64}, mu::Float64, beta::Float64, diagonaltrafo)
+function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, correlator, newcorrelator, eigenvalues::Vector{Float64}, mu::Float64, beta::Float64, diagonaltrafo, nk)
+    
     crystal = getCrystal(ecrystal)
     latticepoints, crystalpoints = getPoints(crystal)
     basisvecs, _ = getVecs(ecrystal)
@@ -187,7 +190,7 @@ function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, co
             fromstateidx = (s1, b1)
 
             tostateidx, fromstateidx = embedinmatrix(tostateidx, fromstateidx, sitedof, sitedof)
-            newcorrelator[s2, b2, r2, s1, b1] += exptopoint * expfrompoint * n * diagonaltrafo[i, fromstateidx] * adjoint(diagonaltrafo)[tostateidx, i]
+            newcorrelator[s2, b2, r2, s1, b1] += exptopoint * expfrompoint * n * diagonaltrafo[i, fromstateidx] * adjoint(diagonaltrafo)[tostateidx, i] / nk
         end
     end  
 end
@@ -271,8 +274,6 @@ function getblochmatrix(atomspercell::Int, hopmats, k::Vector{Float64}, latticep
     
     return bloch
 end
-
-
 
 bravaisconf = joinpath("conf", "bravais.default.toml")
 crystalconf = joinpath("conf", "crystal.default.toml")
