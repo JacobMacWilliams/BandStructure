@@ -27,6 +27,7 @@ function main(modelname::String, configfiles::Vector{String})
     
     crystal = getCrystal(ecrystal)
     latticepoints, crystalpoints = getPoints(crystal)
+    kpoints = discretehexagon(0.05, "constantstep")
     
     #TODO: Setting k to 4 is only appropriate for the hubbard model
     idxs_i, nnlabels = getNearestNeighborsTest(crystal, crystalpoints, 4)
@@ -52,7 +53,7 @@ function main(modelname::String, configfiles::Vector{String})
     beta = 0.01
     fill = 0.499999999
 
-    correlator = meanfielditeration(ecrystal, latticepoints, idxs_ij, nnlabels, mu, beta, fill)
+    correlator = meanfielditeration(ecrystal, latticepoints, kpoints, idxs_ij, nnlabels, mu, beta, fill)
 
     hoppingmatrices = []
     for i in 1:length(eachcol(latticepoints))
@@ -105,7 +106,7 @@ function plotbandstructure(energies)
     savefig(plt, savepath)
 end
 
-function meanfielditeration(ecrystal, latticepoints, nnidxs, nnlabels, mu, beta, fillfactor)
+function meanfielditeration(ecrystal, latticepoints, kpoints, nnidxs, nnlabels, mu, beta, fillfactor)
       
     mf = FieldCorrelator(ecrystal)
     pvmap = Dict([(1, -1.0), (2, 0.0), (3, 1.0)])
@@ -115,7 +116,7 @@ function meanfielditeration(ecrystal, latticepoints, nnidxs, nnlabels, mu, beta,
 
     iteration = 1
     while abs(diffs[end] - diffs[end - 1]) > 0.00001 && length(diffs) < 10000
-        diff, correlator, energies = meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnlabels, mu, beta)
+        diff, correlator, energies = meanfielditerationstep(ecrystal, correlator, latticepoints, kpoints, nnidxs, nnlabels, mu, beta)
         mu = findchempot(2, fillfactor, beta, energies)
         push!(diffs, diff)
         println("Iteration " * string(iteration) * ":" * " difference = " * string(diff))
@@ -125,7 +126,7 @@ function meanfielditeration(ecrystal, latticepoints, nnidxs, nnlabels, mu, beta,
     return correlator
 end
 
-function meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnlabels, mu, beta)
+function meanfielditerationstep(ecrystal, correlator, latticepoints, kpoints, nnidxs, nnlabels, mu, beta)
     
     atomspercell = size(getVecs(ecrystal)[1], 2)
 
@@ -137,7 +138,7 @@ function meanfielditerationstep(ecrystal, correlator, latticepoints, nnidxs, nnl
 
     # BEGIN MEAN FIELD ITERATION
     nextcorrelator = zeros(Complex{Float64}, size(correlator))
-    kpoints = discretehexagon(0.05, "constantstep")
+
     energies = []
     nk = length(kpoints)
 
