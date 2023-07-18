@@ -218,7 +218,11 @@ function gethoppingmatrix(ecrystal::ElectronCrystal, correlator, siteidx::Int, n
             # POTENTIAL CORRECTIONS
             # PAIRING POTENTIAL CORRECTIONS
             if (b2 == b1) && (s2 == s1)
-                hopping[s2, b2, s1, b1] += U * sum([s != s1 ? correlator[s, b1, siteidx, s, b1] : 0 for s in 1:2])
+                for s in 1:2
+                    if (s != s1)
+                        hopping[s2, b2, s1, b1] += U *  correlator[s, b1, siteidx, s, b1]
+                    end 
+                end
             end
 
             # COLOUMB POTENTIAL CORRECTIONS
