@@ -95,13 +95,13 @@ end
 =#
 
 function hubbardslices(idxitr)
-    spinup(i) = ((1, 1, 1, 1, 1) == Tuple(i))
-    spindown(i) = ((2, 2, 1, 2, 2) == Tuple(i))
+    unoccuppied(i) = ((2, 1, 1, 1, 1) == Tuple(i)) || ((1, 2, 1, 2, 2) == Tuple(i))
+    occupied(i) = ((1, 1, 1, 1, 1) == Tuple(i)) || ((2, 2, 1, 2, 2) == Tuple(i))
 
-    spinupiter = filter(spinup, idxitr)
-    spindowniter = filter(spindown, idxitr)
+    unoccupiedidxs = filter(unoccupied, idxitr)
+    occupiedidxs = filter(occupied, idxitr)
 
-    primeslicemap = Dict([(2, spinupiter), (3, spindowniter)])
+    primeslicemap = Dict([(2, unoccupiedidxs), (3, occupiedidxs)])
     return primeslicemap
 end
 
