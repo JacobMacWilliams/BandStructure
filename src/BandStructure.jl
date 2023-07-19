@@ -30,7 +30,7 @@ function main(modelname::String, configfiles::Vector{String})
     kpoints = discretehexagon(0.05, "constantstep")
     
     #TODO: Setting k to 4 is only appropriate for the hubbard model
-    idxs_i, nnlabels = getNearestNeighborsTest(crystal, crystalpoints, 4)
+    idxs_i, nnlabels = getNearestNeighbors(crystal, crystalpoints, 4)
 
     #=
     With the column indices of the crystalpoints which constitute the nearest

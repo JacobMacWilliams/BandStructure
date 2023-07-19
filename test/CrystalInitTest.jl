@@ -71,7 +71,7 @@ function nearestNeighborsGrapheneSanityCheck()
     # Each atom of the unit cell has exactly 3 nearest neighbors. The set of points in which
     # we are searching for the nearest neighbors of a given site contains the site itself. since
     # each site will register as its own nearest neighbor we have to perform a 4-nn search.
-    _, dist = getNearestNeighborsTest(crystal, crystalpoints, 4)
+    _, dist = getNearestNeighbors(crystal, crystalpoints, 4)
     
     # c1 confirms that each of the basis vectors for which we are performing the 4-nn search 
     # is contained in the set points being searched through. c2 confirms that, for each atom

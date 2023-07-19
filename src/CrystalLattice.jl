@@ -12,9 +12,8 @@ export Crystal,
        getSize,
        getLattice,
        getVecs,
-       getPrimitiveNearestNeighbors,
        getPoints,
-       getNearestNeighborsTest
+       getNearestNeighbors
 
 const CLASSKEY = "crystal"
 
@@ -70,7 +69,7 @@ function getPoints(crystal::Crystal)
   return latticepoints, crystalpoints
 end
  
-function getNearestNeighborsTest(crystal, points, k)
+function getNearestNeighbors(crystal, points, k)
   basisvecs, _ = getVecs(crystal)
   tree = KDTree(points, Euclidean())
   idxs, dists = knn(tree, basisvecs, k, true)
