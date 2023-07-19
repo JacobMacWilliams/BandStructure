@@ -75,26 +75,6 @@ function main(modelname::String, configfiles::Vector{String})
     end
     
     plotbandstructure(es)
-    # TEST CODE
-    #=
-    c = true
-    for (basisoriginidx, idxs) in enumerate(eachcol(idxs_ij))
-        for (n, idx) in enumerate(idxs)
-            bravaisidx = Int(idx[2])
-            baseidx = Int(idx[1])
-            println(basisoriginidx)
-            println(n)
-            latticeidx = idxs_i[n, basisoriginidx]
-            bravaisvec = latticepoints[:, bravaisidx]
-            basevec = basis[:, baseidx]
-            point = bravaisvec + basevec
-
-            c = c && (crystalpoints[:, latticeidx] == point)
-            println(c)
-        end
-    end
-    println(c)
-    =#
 end
 
 function plotbandstructure(energies)
