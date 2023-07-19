@@ -4,6 +4,7 @@ using FromFile, Test
 @from "../src/MeanField.jl" using MeanField
 @from "../src/ElectronLattice.jl" using ElectronLattice
 @from "../src/CrystalLattice.jl" using CrystalLattice
+@from "../utils/Embeddings.jl" using Embeddings
 
 #=
 function initest(cfile, bfile)
@@ -19,25 +20,25 @@ end
 =#
 
 function initstructest()
+    model = "hubbard model"
     crystalconf = joinpath("conf", "crystal.default.toml")
     bravaisconf = joinpath("conf", "bravais.default.toml")
-    ecrystal = ElectronCrystal("egraphene", "graphene", 2, crystalconf, bravaisconf)
-    b, _ = getVecs(ecrystal)
-    nbasis = size(b, 1)
-    pmap = hubbardprimeslicemapgraphene(nbasis)
-    #pvmap = Dict([(2, (0.15, 0.75)), (3, (0.15, 0.25))])
-    mf = FieldCorrelator(ecrystal, pmap, true)
-    initmfstruct!(mf)
+    econf = joinpath("conf", "elattice.default.toml")
+    ecrystal = ElectronCrystal(model, econf, crystalconf, bravaisconf)
+    mf = FieldCorrelator(ecrystal)
 
-    expstruct = [2 3 1 1; 3 2 1 1; 1 1 2 3; 1 1 3 2]
     correlator = getcorrelator(mf)
+    correlator = reshape(correlator[:, :, 1, :, :], (4, 4))
+    expstruct = [3 2 1 1; 2 2 1 1; 1 1 2 2; 1 1 2 3]
     return (expstruct == correlator)
 end
 
 function initvaluestest()
+    model = "hubbard model"
     crystalconf = joinpath("conf", "crystal.default.toml")
     bravaisconf = joinpath("conf", "bravais.default.toml")
-    ecrystal = ElectronCrystal("egraphene", "graphene", 2, crystalconf, bravaisconf)
+    econf = joinpath("conf", "elattice.default.toml")
+    ecrystal = ElectronCrystal(model, econf, crystalconf, bravaisconf)
     b, _ = getVecs(ecrystal)
     nbasis = size(b, 1)
     pmap = hubbardprimeslicemapgraphene(nbasis)

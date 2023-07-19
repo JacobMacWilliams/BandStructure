@@ -16,9 +16,9 @@ function embedinlist(state, sizes)
     return idx
 end
 
-function embedinmatrix(tostate, fromstate, sizes)
-    row = embedinlist(tostate, sizes)
-    col = embedinlist(fromstate, sizes)
+function embedinmatrix(tostate, fromstate, tosizes, fromsizes)
+    row = embedinlist(tostate, tosizes)
+    col = embedinlist(fromstate, fromsizes)
     return (row, col)
 end
 
@@ -33,7 +33,7 @@ function extractfromlist(state::Int, sizes)
     smallstep = 1
     counted = 0
     
-    extstate = zeros(length(sizes))
+    extstate = zeros(Int, length(sizes))
     for (i, n) in enumerate(sizes)
         
         largestep = n * smallstep
@@ -43,7 +43,7 @@ function extractfromlist(state::Int, sizes)
             continue
         end
 
-        steps = stepsleft / smallstep
+        steps = Int(stepsleft / smallstep)
         extstate[i] = steps
         counted += stepsleft
 
@@ -58,10 +58,11 @@ function extractfromlist(state::Int, sizes)
     return Tuple(extstate)
 end
 
-function extractfromatrix(tostate::Int, fromstate::Int, sizes)
-    extractedtostate = extractfromlist(tostate, sizes)
-    extractedfromstate = extractfromlist(fromstate, sizes)
-    return (extractedtostate, extractedfromstate)
+function extractfromatrix(tostate::Int, fromstate::Int, tosizes, fromsizes)
+    extractedtostate = extractfromlist(tostate, tosizes)
+    extractedfromstate = extractfromlist(fromstate, fromsizes)
+    idx = (extractedtostate..., extractedfromstate...)
+    return idx
 end
 
 end

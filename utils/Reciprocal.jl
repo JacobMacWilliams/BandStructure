@@ -109,7 +109,7 @@ function discretehexagon(eps::Float64, method::String)
         end
     end
 
-    push!(points, [0; 0])
+    push!(points, [0.0; 0.0])
     return points
 end
 
