@@ -5,7 +5,7 @@ using Roots
 @from "../utils/Distributions.jl" using Distributions
 export findchempot
 
-function chempot(bands::Int, fill::Float64, beta::Float64, mu::Float64, energies)
+function chempot(bands::Int, fill::Float64, beta::Float64, mu::Float64, energies::Array{Float64})
     size = length(energies) / bands
     N = 0
     for e in energies
@@ -15,7 +15,7 @@ function chempot(bands::Int, fill::Float64, beta::Float64, mu::Float64, energies
     return N - fill * bands 
 end
 
-function findchempot(bands::Int, fill::Float64, beta::Float64, energies)
+function findchempot(bands::Int, fill::Float64, beta::Float64, energies::Array{Float64})
     mumax = max(energies...)
     mumin = min(energies...)
     mufinder(mu) = chempot(bands, fill, beta, mu, energies)
