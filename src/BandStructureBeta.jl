@@ -239,6 +239,7 @@ function gethoppingmatrix(ecrystal::ElectronCrystal, correlator, siteidx::Int, n
             end
 
             # COLOUMB POTENTIAL CORRECTIONS
+            #=
             if (b2 == b1) && (s2 == s1)
                 nnidx = nnidxs[b1]
                 for (i, idx) in enumerate(nnidx)
@@ -252,6 +253,7 @@ function gethoppingmatrix(ecrystal::ElectronCrystal, correlator, siteidx::Int, n
                     hopping[s2, b2, s1, b1] += coulomb * corsum
                 end
             end
+            =#
         end
 
         # HANDLING HOPPING AND HOPPING CORRECTIONS
@@ -261,18 +263,21 @@ function gethoppingmatrix(ecrystal::ElectronCrystal, correlator, siteidx::Int, n
 
         if idx === nothing
             continue
-        else
-            neighbororder = nnlabels[b1][idx]
-            if neighbororder <= length(V)
-                coloumb = V[neighbororder]
-                hopping[s2, b2, s1, b1] += - coloumb * conj(correlator[s2, b2, siteidx, s1, b1])
-            end
-
-            # HANDLING NEAREST NEIGHBOR HOPPING
-            if (neighbororder == 1) && (s2 == s1)
-                hopping[s2, b2, s1, b1] += - 1
-            end
         end
+
+        neighbororder = nnlabels[b1][idx]
+        #=
+        if neighbororder <= length(V)
+            coloumb = V[neighbororder]
+            hopping[s2, b2, s1, b1] += - coloumb * conj(correlator[s2, b2, siteidx, s1, b1])
+        end
+        =#
+
+        # HANDLING NEAREST NEIGHBOR HOPPING
+        if (neighbororder == 1) && (s2 == s1)
+            hopping[s2, b2, s1, b1] += - 1
+        end
+
     end
 
     hopping = reshape(hopping, (2*atomspercell, 2*atomspercell))
