@@ -121,32 +121,34 @@ function meanfielditeration(ecrystal, latticepoints, kpoints, nnidxs, nnlabels, 
 
     iteration = 1
     while abs(diffs[end] - diffs[end - 1]) > 0.00001 && length(diffs) < 10000
-        diff, correlator, energies = meanfielditerationstep(ecrystal, correlator, latticepoints, kpoints, nnidxs, nnlabels, mu, beta)
-        mu = findchempot(2, fillfactor, beta, energies)
+        energies, trafos = getEigenEnergies(ecrystal, correlator, latticepoints, kpoints, nnidxs, nnlabels)
+        earray = hcat(energies...)
+        mu = findchempot(2, fillfactor, beta, earray)
+
+        newcorrelator = meanfielditerationstep(ecrystal, correlator, kpoints, energies, trafos, mu, beta)
+        diff = sum(broadcast(abs, correlator - newcorrelator))
         push!(diffs, diff)
         println("Iteration " * string(iteration) * ":" * " difference = " * string(diff))
+        
+        correlator = newcorrelator
         iteration += 1
     end
 
     return correlator
 end
 
-function meanfielditerationstep(ecrystal, correlator, latticepoints, kpoints, nnidxs, nnlabels, mu, beta)
+function getEigenEnergies(ecrystal, correlator, latticepoints, kpoints, nnidxs, nnlabels)
     
     atomspercell = size(getVecs(ecrystal)[1], 2)
-
     hoppingmatrices = []
     for i in 1:length(eachcol(latticepoints))
         hopping = gethoppingmatrix(ecrystal, correlator, i, nnidxs, nnlabels)
         push!(hoppingmatrices, hopping)
     end
 
-    # BEGIN MEAN FIELD ITERATION
-    nextcorrelator = zeros(Complex{Float64}, size(correlator))
-
     energies = []
-    nk = length(kpoints)
-
+    fromdiagonaltrafos = []
+    
     for k in kpoints
         bloch = getblochmatrix(atomspercell, hoppingmatrices, k, latticepoints)
         blochfactors = eigen(bloch)
@@ -161,17 +163,13 @@ function meanfielditerationstep(ecrystal, correlator, latticepoints, kpoints, nn
         push!(energies, eks)
 
         fromdiagonalbase = blochfactors.vectors
-        #todiagonalbase = adjoint(fromdiagonalbase) # Unnecessary transformation
-        correlatorupdatestep!(ecrystal, k, correlator, nextcorrelator, eks, mu, beta, fromdiagonalbase, nk)
+        push!(fromdiagonaltrafos, fromdiagonalbase)
     end
-    energies = hcat(energies...)
 
-    diff = sum(broadcast(abs, correlator - nextcorrelator))
-    return diff, nextcorrelator, energies
+    return energies, fromdiagonaltrafos
 end
 
-function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, correlator, newcorrelator, eigenvalues::Vector{Float64}, mu::Float64, beta::Float64, diagonaltrafo, nk)
-    
+function meanfielditerationstep(ecrystal, correlator, kpoints::Vector{Any}, energies::Vector{Any}, trafos, mu, beta)
     crystal = getCrystal(ecrystal)
     latticepoints, crystalpoints = getPoints(crystal)
     basisvecs, _ = getVecs(ecrystal)
@@ -180,6 +178,9 @@ function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, co
     latticesize = size(latticepoints, 2)
     latticedof = (atomspercell, latticesize)
     sitedof = (2, atomspercell)
+    nk = length(kpoints)
+
+    newcorrelator = zeros(Complex{Float64}, size(correlator))
 
     for i in CartesianIndices(correlator)
         (s2, b2, r2, s1, b1) = Tuple(i)
@@ -196,17 +197,22 @@ function correlatorupdatestep!(ecrystal::ElectronCrystal, k::Vector{Float64}, co
         topoint = crystalpoints[:, toidx]
         frompoint = crystalpoints[:, fromidx]
 
-        for (j, e) in enumerate(eigenvalues)
-            exptopoint = exp(im * dot(k, topoint))
-            expfrompoint = exp(- im * dot(k, frompoint))
-            n = fermidistribution(e, mu, beta)
-            tostateidx = (s2, b2)
-            fromstateidx = (s1, b1)
+        for (j, k) in enumerate(kpoints)
+            es = energies[j]
+            for (l, e) in enumerate(es)
+                diagonaltrafo = trafos[j]
+                exptopoint = exp(im * dot(k, topoint))
+                expfrompoint = exp(- im * dot(k, frompoint))
+                n = fermidistribution(e, mu, beta)
+                tostateidx = (s2, b2)
+                fromstateidx = (s1, b1)
 
-            tostateidx, fromstateidx = embedinmatrix(tostateidx, fromstateidx, sitedof, sitedof)
-            newcorrelator[s2, b2, r2, s1, b1] += exptopoint * expfrompoint * n * diagonaltrafo[fromstateidx, j] * conj(diagonaltrafo[tostateidx, j]) / nk
+                tostateidx, fromstateidx = embedinmatrix(tostateidx, fromstateidx, sitedof, sitedof)
+                newcorrelator[s2, b2, r2, s1, b1] += exptopoint * expfrompoint * n * diagonaltrafo[fromstateidx, l] * conj(diagonaltrafo[tostateidx, l]) / nk
+            end
         end
     end  
+return newcorrelator
 end
 
 function gethoppingmatrix(ecrystal::ElectronCrystal, correlator, siteidx::Int, nnidxs, nnlabels)
