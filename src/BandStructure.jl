@@ -1,4 +1,4 @@
-module BandStructureBeta
+module BandStructure
 using FromFile
 using LinearAlgebra
 using Plots
