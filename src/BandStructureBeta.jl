@@ -50,7 +50,7 @@ function main(modelname::String, configfiles::Vector{String})
     end
 
     mu = 0.0
-    beta = 0.01
+    beta = 100.0
     fill = 0.499999999
 
     correlator = meanfielditeration(ecrystal, latticepoints, kpoints, idxs_ij, nnlabels, mu, beta, fill)
