@@ -82,18 +82,6 @@ function initmfvalues!(mf::FieldCorrelator, primevaluemap::Dict)
     end
 end
 
-#=
-function hubbardslices(idxitr)
-    pspin(i) = (i[1] == i[4]) && (i[2] == i[5]) && (i[3] == 1)  ? true : false
-    apspin(i) = (i[1] != i[4]) && (i[2] == i[5]) && (i[3] == 1) ? true : false
-
-    pspiniter = Iterators.filter(pspin, idxitr)
-    apspiniter = Iterators.filter(apspin, idxitr)
-    primeslicemap = Dict([(2, pspiniter), (3, apspiniter)])
-    return primeslicemap
-end
-=#
-
 function hubbardslices(idxitr)
     unoccupied(i) = ((2, 1, 1, 2, 1) == Tuple(i)) || ((1, 2, 1, 1, 2) == Tuple(i)) || (Tuple(i)[1] != Tuple(i)[4] && Tuple(i)[2] == Tuple(i)[5] && Tuple(i)[3] == 1)
     occupied(i) = ((1, 1, 1, 1, 1) == Tuple(i)) || ((2, 2, 1, 2, 2) == Tuple(i))
