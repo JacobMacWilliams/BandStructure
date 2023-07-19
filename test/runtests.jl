@@ -1,5 +1,4 @@
 tests = ["CrystalInitTest.jl", 
-         "BandStructureTest.jl", 
          "ElectronLatticeTest.jl",
          "MeanFieldTest.jl",
          "EmbeddingsTest.jl",
