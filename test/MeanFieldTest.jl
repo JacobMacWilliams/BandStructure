@@ -28,11 +28,8 @@ function initstructest()
     mf = FieldCorrelator(ecrystal)
 
     correlator = getcorrelator(mf)
-    correlator = reshape(correlator, (2*2*5, 2*2))
-    correlator[1:4, 1:4]
-    expstruct = ones(2*2*5, 2*2)
-    expstruct[1:4, 1:4] = [2 3 1 1; 3 2 1 1; 1 1 2 3; 1 1 3 2]
-    #correlator = getcorrelator(mf)
+    correlator = reshape(correlator[:, :, 1, :, :], (4, 4))
+    expstruct = [3 2 1 1; 2 2 1 1; 1 1 2 2; 1 1 2 3]
     return (expstruct == correlator)
 end
 
