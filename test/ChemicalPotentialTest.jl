@@ -22,6 +22,10 @@ function highband(k, r)
     return energy
 end
 
+function bands(k, r)
+    return [-highband(k, r), highband(k, r)]
+end
+
 function highbandTest()
     crystalconf = joinpath("conf", "crystal.default.toml")
     bravaisconf = joinpath("conf", "bravais.default.toml")
@@ -52,11 +56,8 @@ function chemicalpotentialtest()
     # Calculate energy of each k point in the BZ for both bands.
     _, bravais = getVecs(ecrystal)
     points = discretehexagon(0.01, "constantstep")
-    energyhigh = collect(Iterators.map(x -> highband(x, bravais[:, 1]), points))
-    energylow = collect(Iterators.map(x -> -highband(x, bravais[:, 1]), points))
-    energies = []
-    push!(energies, energyhigh...)
-    push!(energies, energylow...)
+    energies = collect(Iterators.map(x -> bands(x, bravais[:, 1]), points))
+    energies = hcat(energies...)
 
     # find chemical potential
     mu = findchempot(2, 0.5, 100.0, energies)
